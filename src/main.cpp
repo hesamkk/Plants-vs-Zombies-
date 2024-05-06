@@ -1,9 +1,13 @@
 #include <iostream>
-#include "file.hpp"
+#include "System.hpp"
+// #include "Plants.hpp"
+// #include "Zombies.hpp"
+// #include "Global.hpp"
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 
 int main(){
-    cout << "This is a sample file for the game." << endl;
-    print();
+    System system;
+    system.Run();
 }
