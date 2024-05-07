@@ -9,22 +9,28 @@ using namespace sf;
 
 class Sun{
 public:
-    Sun(Vector2f p){
+    Sun(Vector2f p , int* m){
         if(!texture.loadFromFile(file_path))
             abort();
-        // rect making
         sprite.setTexture(texture);
-        sprite.setTextureRect(rect);
+        sprite.setScale(0.2 , 0.2);
         pos = p;
+        sprite.setPosition(pos);
+        money = m;
     }
-    ~Sun();
-    void Render();
+    ~Sun(){
+        delete this;
+    }
+    void MoveDown();
+    void isClicked();
+    void Update();
+    Sprite get_sprite() { return sprite; }
 private:
-    const string file_path = "";
+    const string file_path = "./src/pics/Sun.png";
     Texture texture;
     Sprite sprite;
-    IntRect rect;
     Vector2f pos;
+    int *money;
 };
 
 class Card{
@@ -87,3 +93,40 @@ public:
 private:
     const string file_path = "";
 };
+
+class Shot{
+public:
+    Shot(Vector2f given_pos){
+        pos = given_pos;
+    }
+    void Move();
+    void Render();
+private:
+    const string file_path = "";
+    Vector2f pos;
+};
+
+class IceShot{
+public:
+    IceShot(Vector2f given_pos){
+        pos = given_pos;
+    }
+    void Move();
+    void Render();
+private:
+    const string file_path = "";
+    Vector2f pos;
+};
+
+class MelonShot{
+public:
+    MelonShot(Vector2f given_pos){
+        pos = given_pos;
+    }
+    void Move();
+    void Render();
+private:
+    const string file_path = "";
+    Vector2f pos;
+};
+

@@ -1,6 +1,6 @@
 CXX = g++ -g -std=c++11
 
-FILES = build/main.o build/System.o
+FILES = build/main.o build/System.o build/Global.o
 EXE = pvz.out
 
 all: $(EXE)
@@ -12,6 +12,9 @@ build/main.o: src/main.cpp src/System.hpp src/Global.hpp src/Plants.hpp src/Zomb
 	$(CXX) -c $< -o $@ -lsfml-graphics -lsfml-window -lsfml-system
 
 build/System.o: src/System.cpp src/System.hpp src/Global.hpp src/Plants.hpp src/Zombies.hpp
+	$(CXX) -c $< -o $@ -lsfml-graphics -lsfml-window -lsfml-system
+
+build/Global.o: src/Global.cpp src/System.hpp src/Global.hpp src/Plants.hpp src/Zombies.hpp
 	$(CXX) -c $< -o $@ -lsfml-graphics -lsfml-window -lsfml-system
 
 .PHONY: all clean
