@@ -37,24 +37,28 @@ private:
 
 class NormalZombie : public Zombie{
 public:
-    NormalZombie(Vector2f given_pos) : Zombie(given_pos , HEALTH, SPEED ,DAMAGE, file_path){
-
+    NormalZombie(Vector2f given_pos , int h, int s, int d) : Zombie(given_pos , h, s ,d, file_path){
+        HEALTH = h;
+        SPEED = s;
+        DAMAGE = d;
     }
 private:
-    const int HEALTH = 10;
-    const int SPEED = 10;
-    const int DAMAGE = 10;
+    int HEALTH = -1;
+    int SPEED = -1;
+    int DAMAGE = -1;
     const string file_path = "";
 };
 
 class Giant : public Zombie{
 public:
-    Giant(Vector2f given_pos) : Zombie(given_pos , HEALTH, SPEED ,DAMAGE ,  file_path){
-
+    Giant(Vector2f given_pos, int h, int s, int d) : Zombie(given_pos , h, s ,d ,  file_path){
+        HEALTH = h;
+        SPEED = s;
+        DAMAGE = d;
     }
 private:
-    const int HEALTH = 10;
-    const int SPEED = 10;
-    const int DAMAGE = 10;
+    int HEALTH = -1;
+    int SPEED = -1;
+    int DAMAGE = -1;
     const string file_path = "";
 };
