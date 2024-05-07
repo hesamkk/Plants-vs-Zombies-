@@ -40,7 +40,6 @@ void System::Run(){
                 window.close();
             }
         }
-
         elapsedTime += clock.restart();
         if (elapsedTime >= interval)
         {
@@ -54,11 +53,7 @@ void System::Run(){
             s->Update();
             window.draw(s->get_sprite());
         }
-
-        // for (auto e : suns){
-        //     if(e->get_sprite().getPosition().y > Window_hight)
-        //         delete e;
-        // }
+        Updater();
         
         window.display();        
     }
@@ -69,6 +64,18 @@ void System::MakeSun(int random_number){
         Vector2f p = {random_number , 0} ;
         Sun* new_sun = new Sun(p , &money);
         suns.push_back(new_sun);    
+}
+
+void System::Updater(){
+    vector<Sun*> trashs;
+    for(auto s : suns){
+        if(s->get_sprite().getPosition().y >= Window_hight)
+            trashs.push_back(s);
+    }
+    for (auto z : trashs){
+        suns.erase(remove(suns.begin() , suns.end() , z),suns.end());
+        delete z;
+    }   
 }
 
 

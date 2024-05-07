@@ -18,9 +18,7 @@ public:
         sprite.setPosition(pos);
         money = m;
     }
-    ~Sun(){
-        delete this;
-    }
+    ~Sun();
     void MoveDown();
     void isClicked();
     void Update();
