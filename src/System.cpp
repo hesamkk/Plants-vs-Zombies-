@@ -52,7 +52,7 @@ void System::Run(){
                     {
                         
                         
-                            s->vanish();
+                            ;
                              
                         
 
@@ -71,7 +71,7 @@ void System::Run(){
         }
         window.draw(bg_sprite);
         for (auto s : suns){
-            s->MoveDown();
+            s->MoveUpDown();
             s->Update();
             window.draw(s->get_sprite());
         }
