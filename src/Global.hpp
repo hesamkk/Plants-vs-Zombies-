@@ -18,9 +18,11 @@ public:
         sprite.setPosition(pos);
         money = m;
     }
+    void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
     ~Sun();
     void MoveDown();
-    void isClicked();
+    void MoveUp();
+    void isClicked(Vector2i Mouse_position);
     void Update();
     Sprite get_sprite() { return sprite; }
 private:
@@ -29,6 +31,7 @@ private:
     Sprite sprite;
     Vector2f pos;
     int *money;
+    FloatRect Sprite_Bounds ;
 };
 
 class Card{

@@ -19,3 +19,16 @@ void Sun::Update(){
 
 Sun::~Sun(){
 }
+void Sun::isClicked(Vector2i Mouse_position){
+    
+    revealing_the_bounds();
+    
+    if (Sprite_Bounds.contains(static_cast<sf::Vector2f>(Mouse_position)))
+    {
+        // MoveUp();
+        (*money) = (*money) + 25;
+        cout << *money << endl;
+        
+    }
+    
+}

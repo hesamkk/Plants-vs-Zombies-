@@ -39,6 +39,18 @@ void System::Run(){
             if(event.type == Event::Closed){
                 window.close();
             }
+
+            if (event.type == sf::Event::MouseButtonPressed){
+                
+                for (auto s : suns)
+                {
+                    
+                    Vector2i Mouse_position = sf::Mouse::getPosition(window);
+                    // sf::Vector2f worldMousePos = window.mapPixelToCoords(Mouse_position);
+                    s->isClicked(Mouse_position);
+                }
+            
+            }
         }
         elapsedTime += clock.restart();
         if (elapsedTime >= interval)
@@ -53,6 +65,9 @@ void System::Run(){
             s->Update();
             window.draw(s->get_sprite());
         }
+        
+        
+        
         Updater();
         
         window.display();        
@@ -60,7 +75,7 @@ void System::Run(){
 }
 
 
-void System::MakeSun(int random_number){
+void System:: MakeSun(int random_number){
         Vector2f p = {random_number , 0} ;
         Sun* new_sun = new Sun(p , &money);
         suns.push_back(new_sun);    
@@ -69,7 +84,7 @@ void System::MakeSun(int random_number){
 void System::Updater(){
     vector<Sun*> trashs;
     for(auto s : suns){
-        if(s->get_sprite().getPosition().y >= Window_hight)
+        if((s->get_sprite().getPosition().y >= Window_hight) || (s->get_sprite().getPosition().y <= 0) )
             trashs.push_back(s);
     }
     for (auto z : trashs){
