@@ -47,7 +47,17 @@ void System::Run(){
                     
                     Vector2i Mouse_position = sf::Mouse::getPosition(window);
                     // sf::Vector2f worldMousePos = window.mapPixelToCoords(Mouse_position);
-                    s->isClicked(Mouse_position);
+                    // s->isClicked(Mouse_position);
+                    if ((s->isClicked(Mouse_position)))
+                    {
+                        
+                        
+                            s->vanish();
+                             
+                        
+
+                    }
+                    
                 }
             
             }

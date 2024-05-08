@@ -17,9 +17,16 @@ void Sun::Update(){
     sprite.setPosition(pos);
 }
 
+void Sun::vanish(){
+
+    pos.y -= Window_hight;
+    cout << "kk";
+    Update();
+
+}
 Sun::~Sun(){
 }
-void Sun::isClicked(Vector2i Mouse_position){
+bool Sun::isClicked(Vector2i Mouse_position){
     
     revealing_the_bounds();
     
@@ -28,7 +35,10 @@ void Sun::isClicked(Vector2i Mouse_position){
         // MoveUp();
         (*money) = (*money) + 25;
         cout << *money << endl;
+        return true;
         
     }
+    else
+        return false;
     
 }

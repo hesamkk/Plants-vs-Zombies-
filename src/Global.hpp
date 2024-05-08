@@ -21,8 +21,8 @@ public:
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
     ~Sun();
     void MoveDown();
-    void MoveUp();
-    void isClicked(Vector2i Mouse_position);
+    void vanish();
+    bool isClicked(Vector2i Mouse_position);
     void Update();
     Sprite get_sprite() { return sprite; }
 private:
