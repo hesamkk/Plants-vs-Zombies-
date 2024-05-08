@@ -17,11 +17,6 @@ void Sun::Update(){
     sprite.setPosition(pos);
 }
 
-
-
-
-
-
 Sun::~Sun(){
     
 }

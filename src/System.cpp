@@ -30,7 +30,13 @@ void System::Run(){
 
     Clock clock;
     Time interval = milliseconds(2000); 
-    Time elapsedTime = Time::Zero;
+    Time NormalZombieSpawnRate = milliseconds(5000);
+    Time GiantSpawnRate = milliseconds(7000);
+    
+    Time DeltaTime_SunDrop = Time::Zero;
+    Time DeltaTime_ZombieSpawn = Time::Zero;
+    Time DeltaTime_GiantSpawn = Time::Zero;
+    Time DeltaTime= Time::Zero;
 
     while(window.isOpen()){
         window.clear();
@@ -46,30 +52,42 @@ void System::Run(){
                 {
                     
                     Vector2i Mouse_position = sf::Mouse::getPosition(window);
-                    // sf::Vector2f worldMousePos = window.mapPixelToCoords(Mouse_position);
-                    // s->isClicked(Mouse_position);
-                    if ((s->isClicked(Mouse_position)))
-                    {
-                        
-                        
-                            ;
-                             
-                        
-
-                    }
+                    s->isClicked(Mouse_position);
                     
                 }
             
             }
         }
-        elapsedTime += clock.restart();
-        if (elapsedTime >= interval)
+
+        DeltaTime = clock.restart();
+        DeltaTime_SunDrop += DeltaTime;
+        DeltaTime_ZombieSpawn += DeltaTime;
+        DeltaTime_GiantSpawn += DeltaTime;
+        if (DeltaTime_SunDrop >= interval)
         {
             random_number = dis(gen);
             MakeSun(random_number);
-            elapsedTime = Time::Zero;
+            DeltaTime_SunDrop -= interval;
         }
+        if (DeltaTime_ZombieSpawn >= NormalZombieSpawnRate){
+            MakeZombie(0.05, 10 , 10 , random_number);    //Needs to be changed...
+            DeltaTime_ZombieSpawn -= NormalZombieSpawnRate;
+        }
+        if (DeltaTime_GiantSpawn >= GiantSpawnRate){
+            MakeGiant(0.15 , 100 , 100 , random_number);
+            DeltaTime_GiantSpawn -= GiantSpawnRate;
+        }
+
+        
+
         window.draw(bg_sprite);
+
+        for (auto z : zombies){
+            z->Mover();
+            z->Update();
+            z->NextFrame();
+            window.draw(z->get_sprite());
+        }
         for (auto s : suns){
             s->MoveUpDown();
             s->Update();
@@ -86,7 +104,7 @@ void System::Run(){
 
 
 void System:: MakeSun(int random_number){
-        Vector2f p = {random_number , 0} ;
+        Vector2f p = {random_number , -100} ;
         Sun* new_sun = new Sun(p , &money);
         suns.push_back(new_sun);    
 }
@@ -94,15 +112,25 @@ void System:: MakeSun(int random_number){
 void System::Updater(){
     vector<Sun*> trashs;
     for(auto s : suns){
-        if((s->get_sprite().getPosition().y >= Window_hight) || (s->get_sprite().getPosition().y <= 0) )
+        if((s->get_sprite().getPosition().y >= Window_hight) || (s->get_sprite().getPosition().y <= -120) )
             trashs.push_back(s);
     }
-    for (auto z : trashs){
-        suns.erase(remove(suns.begin() , suns.end() , z),suns.end());
-        delete z;
-    }   
+    for (auto s_ : trashs){
+        suns.erase(remove(suns.begin() , suns.end() , s_),suns.end());
+        delete s_;
+    } 
 }
 
+void System::MakeZombie(float speed_, float health_, float damage_,int random_number){
+    Vector2f p_ = {1000 , Y_array_of_zombies[random_number%5]};
+    Zombie* new_zombie = new Zombie(p_ , health_ , speed_ , damage_ , 0);
+    zombies.push_back(new_zombie);
+}
 
+void System::MakeGiant(float speed_, float health_, float damage_,int random_number){
+    Vector2f p_ = {1000 , Y_array_of_zombies[random_number%5]};
+    Zombie* new_zombie = new Zombie(p_ , health_ , speed_ , damage_ , 1);
+    zombies.push_back(new_zombie);
+}
 
 
