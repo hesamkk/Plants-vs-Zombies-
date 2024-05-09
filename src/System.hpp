@@ -23,6 +23,7 @@ public:
     void MakeZombie(float s, float b, float c, int r);
     void MakeGiant(float s , float b , float c , int r);
     void Updater();
+    bool IsInTheWindow(Vector2i position);
 private:
     vector <Plant*> plants;
     vector <Zombie*> zombies;

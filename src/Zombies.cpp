@@ -18,6 +18,8 @@ Sprite Zombie::get_sprite(){
 
 void Zombie::Update(){
     sprite.setPosition(pos);
+    
+    
 }
 
 void Zombie::NextFrame(){

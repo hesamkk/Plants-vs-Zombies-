@@ -133,4 +133,12 @@ void System::MakeGiant(float speed_, float health_, float damage_,int random_num
     zombies.push_back(new_zombie);
 }
 
+bool System::IsInTheWindow(Vector2i position){
+    if ((position.x < 0)||(position.y < 0)||(position.x > Window_lenght)||(position.y > Window_hight))
+    {
+        return false;
+    }
+    else
+        return true;
+}
 
