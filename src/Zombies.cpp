@@ -18,6 +18,11 @@ Sprite Zombie::get_sprite(){
 
 void Zombie::Update(){
     sprite.setPosition(pos);
+    if (pos.x < 0)
+    {
+        cout << "kk"<<endl;
+    }
+    
     
     
 }
