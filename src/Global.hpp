@@ -132,23 +132,3 @@ private:
     Vector2f pos;
 };
 
-class LostBrain
- {
- private:
-    const string file_path = "";
-    Vector2f pos;
- public:
-    LostBrain(sf::Vector2f defaultVal = sf::Vector2f(0.f, 0.f)){
-        pos = defaultVal;
-    }
-    ~LostBrain();
- };
- 
- LostBrain::LostBrain(/* args */)
- {
- }
- 
- LostBrain::~LostBrain()
- {
- }
- //listen to telegram
