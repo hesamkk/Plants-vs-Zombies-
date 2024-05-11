@@ -28,10 +28,12 @@ public:
     void Updater();
     bool IsInTheWindow(Vector2i position);
     bool NewPlant(Vector2i m_p);
+    void MakeShot(Vector2f p_p);
 private:
     vector <Plant*> plants;
     vector <Zombie*> zombies;
     vector <Sun*> suns;
+    vector <Shot*> shots;
     int field_width;
     int field_hight;
     int money = 0;

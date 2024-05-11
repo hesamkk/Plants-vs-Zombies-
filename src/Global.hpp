@@ -113,12 +113,27 @@ class Shot{
 public:
     Shot(Vector2f given_pos){
         pos = given_pos;
+        if(!texture.loadFromFile(file_path))
+            abort();
+        rect.left = 0;
+        rect.top = 0;
+        rect.height = 29;
+        rect.width = 29;
+        sprite.setTexture(texture);
+        sprite.setTextureRect(rect);
+        sprite.setPosition(pos);
     }
+    ~Shot();
     void Move();
     void Render();
+    Sprite get_sprite(){ return sprite; }
+    IntRect get_rect(){ return rect; }
 private:
-    const string file_path = "";
+    const string file_path = "./src/pics/Pea-Shot-NBG.png";
     Vector2f pos;
+    Sprite sprite;
+    Texture texture;
+    IntRect rect;
 };
 
 class IceShot{

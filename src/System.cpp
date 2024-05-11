@@ -35,10 +35,12 @@ void System::Run(){
     Time interval = milliseconds(2000); 
     Time NormalZombieSpawnRate = milliseconds(5000);
     Time GiantSpawnRate = milliseconds(7000);
-    
+    Time ShotRate = milliseconds(1000);
     Time DeltaTime_SunDrop = Time::Zero;
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
+    Time DeltaTime_Shot = Time::Zero;
+    Time DeltaTime_Shot_Saver = Time::Zero;
     Time DeltaTime= Time::Zero;
     bool mouseDown = false;
     bool taged_pea_card = false;
@@ -76,6 +78,7 @@ void System::Run(){
         DeltaTime_SunDrop += DeltaTime;
         DeltaTime_ZombieSpawn += DeltaTime;
         DeltaTime_GiantSpawn += DeltaTime;
+        DeltaTime_Shot += DeltaTime;
         random_number = dis(gen);
         if (DeltaTime_SunDrop >= interval)
         {
@@ -95,15 +98,38 @@ void System::Run(){
         pea_card.Update();
         window.draw(bg_sprite);
         window.draw(pea_card.get_sprite());
+        vector<Plant*> attackingPlants;
 
         for (auto p : plants){
+            if(p->IsThereZombie(zombies))
+            {
+                p->status_setter(1);
+                attackingPlants.push_back(p);
+            }
+            else
+                p->status_setter(0);
+            p->Updater();
             window.draw(p->sprite);
         }
+
+        DeltaTime_Shot_Saver = DeltaTime_Shot;
+        for (auto p : attackingPlants){
+            DeltaTime_Shot = DeltaTime_Shot_Saver;
+            if(DeltaTime_Shot >= ShotRate){
+                MakeShot(p->sprite.getPosition());
+                DeltaTime_Shot = Time::Zero;
+            }
+        }
+
         for (auto z : zombies){
             z->Mover();
             z->Update();
             z->NextFrame();
             window.draw(z->get_sprite());
+        }
+        for(auto sh : shots){
+            sh->Move();
+            window.draw(sh->get_sprite());
         }
         for (auto s : suns){
             s->MoveUpDown();
@@ -115,6 +141,7 @@ void System::Run(){
         
         // cout << "MousePosition: " << Mouse_position.x << ' ' << Mouse_position.y << endl;
         Updater();
+        Handler();
         
         window.display();        
     }
@@ -129,6 +156,7 @@ void System:: MakeSun(int random_number){
 
 void System::Updater(){
     vector<Sun*> trashs;
+    vector<Shot*> trashot;
     for(auto s : suns){
         if((s->get_sprite().getPosition().y >= Window_hight) || (s->get_sprite().getPosition().y <= -120) )
             trashs.push_back(s);
@@ -137,6 +165,14 @@ void System::Updater(){
         suns.erase(remove(suns.begin() , suns.end() , s_),suns.end());
         delete s_;
     } 
+    for (auto sh : shots){
+        if(sh->get_sprite().getPosition().x >= Window_lenght)
+            trashot.push_back(sh);
+    }
+    for (auto sh_ : trashot){
+        shots.erase(remove(shots.begin() , shots.end() , sh_),shots.end());
+        delete sh_;
+    }
 }
 
 void System::MakeZombie(float speed_, float health_, float damage_,int random_number){
@@ -186,5 +222,33 @@ bool System::NewPlant(Vector2i Mouse_position){
     }
     else 
         return false;
+}
+
+void System::MakeShot(Vector2f Plant_position){
+    Vector2f p_ = {Plant_position.x+20 , Plant_position.y};
+    Shot* new_shot = new Shot(p_);
+    shots.push_back(new_shot);    
+}
+
+void System::Handler(){
+    vector<Zombie*> trashz;
+    vector<Shot*> trashot;
+    for(auto z : zombies){
+        for(auto s: shots){
+            if((int)s->get_sprite().getPosition().x == (int)z->get_x() &&  (s->get_sprite().getPosition().y == z->get_y()+60 || s->get_sprite().getPosition().y == z->get_y()+50))
+            {
+                trashz.push_back(z);
+                trashot.push_back(s);
+            }
+        }
+    }
+    for (auto z_ : trashz){
+        zombies.erase(remove(zombies.begin() , zombies.end() , z_),zombies.end());
+        delete z_;        
+    }
+    for (auto s_ : trashot){
+        shots.erase(remove(shots.begin() , shots.end() , s_),shots.end());
+        delete s_;
+    }
 }
 

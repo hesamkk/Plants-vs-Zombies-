@@ -6,7 +6,9 @@
 using namespace std;
 using namespace sf;
 
-Zombie::~Zombie(){};
+Zombie::~Zombie(){
+    
+};
 
 void Zombie::Mover(){
     pos.x -= speed;

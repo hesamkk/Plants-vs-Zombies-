@@ -47,9 +47,9 @@ public:
     void Mover();
     void NextFrame();
     Sprite get_sprite();
+    IntRect get_rect(){ return rect; }
     float get_y(){ return sprite.getPosition().y; }
     float get_x(){ return sprite.getPosition().x; }
-
 private:
     float health;
     float speed;

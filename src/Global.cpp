@@ -18,7 +18,9 @@ void Sun::Update(){
 }
 
 Sun::~Sun(){
-    
+}
+
+Shot::~Shot(){
 }
 bool Sun::isClicked(Vector2i Mouse_position){
     
@@ -75,4 +77,9 @@ void Card::Used(){
     Avalablity = false;
     rect.left += rect.width;
     sprite.setTextureRect(rect);
+}
+
+void Shot::Move(){
+    pos.x += 1;
+    sprite.setPosition(pos);
 }

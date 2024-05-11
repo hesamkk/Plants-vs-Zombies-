@@ -27,14 +27,18 @@ public:
     bool IsThereZombie(const vector<Zombie*> zombies);
     bool IsTouchingMouse(Vector2i m_p);
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
+    void status_setter(int given_status ){ status = given_status; }
+    int get_status(){ return status; }
+    virtual void NextFrame(){ };
     IntRect rect;
     Sprite sprite;
 private:
     Texture texture;
     FloatRect Sprite_Bounds;
     Vector2f pos;
-    int status = 0 ;
     int health;
+    int status = 0; //0 for Normal  -   1 for Attack
+
 };
 
 
@@ -44,6 +48,7 @@ public:
         HEALTH = h;
     }
     const string file_path = "";
+    void NextFrame();
 private:
     const int drop_rate = -1;     //default value
     int HEALTH = -1;       //default value
@@ -53,14 +58,18 @@ private:
 
 class Pea : public Plant{
 public:
-    Pea(Vector2f given_pos , int h, int s) : Plant(given_pos , h , "./src/pics/Pea-Attack.png"){
+    Pea(Vector2f given_pos , int h, int s) : Plant(given_pos , h , "./src/pics/Pea-Attack-NBG.png"){
         HEALTH = h;
         SHOT_RATE = s;
         rectMaker();
     };
-    const string file_path = "./src/pics/Pea-Attack.png";
+    const string file_path = "./src/pics/Pea-Attack-NBG.png";
     void rectMaker();
+    void NextFrame();
 private:
+    Clock clock;
+    Time frame_changeTime = milliseconds(200);
+    Time DeltaTime_NextFrame = Time::Zero;
     int HEALTH = -1;
     int SHOT_RATE = -1;
 };
