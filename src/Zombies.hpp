@@ -50,6 +50,8 @@ public:
     IntRect get_rect(){ return rect; }
     float get_y(){ return sprite.getPosition().y; }
     float get_x(){ return sprite.getPosition().x; }
+    bool Is_Shot(Vector2i pea_position);
+    void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
 private:
     float health;
     float speed;
@@ -65,5 +67,6 @@ private:
     int type;
     const string nz_file_path = "./src/pics/ZombieSP.png";
     const string giant_file_path ="./src/pics/GiantSP.png";
+    FloatRect Sprite_Bounds ;
 };
 

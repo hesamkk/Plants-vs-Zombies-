@@ -235,7 +235,7 @@ void System::Handler(){
     vector<Shot*> trashot;
     for(auto z : zombies){
         for(auto s: shots){
-            if((int)s->get_sprite().getPosition().x == (int)z->get_x() &&  (s->get_sprite().getPosition().y == z->get_y()+60 || s->get_sprite().getPosition().y == z->get_y()+50))
+            if(z -> Is_Shot(Vector2i(s -> get_sprite().getPosition())))
             {
                 trashz.push_back(z);
                 trashot.push_back(s);

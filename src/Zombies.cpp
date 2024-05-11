@@ -36,3 +36,18 @@ void Zombie::NextFrame(){
     DeltaTime_NextFrame = Time::Zero;
     }
 }
+
+bool Zombie::Is_Shot(Vector2i pea_position){
+    revealing_the_bounds();
+    
+    if (Sprite_Bounds.contains(static_cast<sf::Vector2f>(pea_position)))
+    {
+            
+        return true;
+        
+    }
+    else
+        
+        return false;
+
+}
