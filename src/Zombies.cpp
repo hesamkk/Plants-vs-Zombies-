@@ -22,9 +22,6 @@ void Zombie::Update(){
     {
         cout << "kk"<<endl;
     }
-    
-    
-    
 }
 
 void Zombie::NextFrame(){

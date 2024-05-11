@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "Zombies.hpp"
 
 using namespace std;
 using namespace sf;
@@ -14,20 +15,26 @@ public:
         health = h;
         if(!texture.loadFromFile(texture_adr))
             abort();
-        //rect making
         sprite.setTexture(texture);
         sprite.setTextureRect(rect);
+        sprite.setScale(1.7, 1.7);
+        sprite.setPosition(pos);
+        cout << "MADE yohooo!" << endl;
     }
     ~Plant();
     void Render();
     void Updater();
+    bool IsThereZombie(const vector<Zombie*> zombies);
+    bool IsTouchingMouse(Vector2i m_p);
+    void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
+    IntRect rect;
+    Sprite sprite;
 private:
     Texture texture;
-    Sprite sprite;
-    IntRect rect;
-    int health;
+    FloatRect Sprite_Bounds;
     Vector2f pos;
     int status = 0 ;
+    int health;
 };
 
 
@@ -36,21 +43,26 @@ public:
     SunFlower(Vector2f given_pos, int h) : Plant(given_pos , h , file_path){
         HEALTH = h;
     }
+    const string file_path = "";
 private:
     const int drop_rate = -1;     //default value
     int HEALTH = -1;       //default value
-    const string file_path = "";
+    
 };
 
 
 class Pea : public Plant{
 public:
-    Pea(Vector2f given_pos , int h) : Plant(given_pos , h , file_path){
+    Pea(Vector2f given_pos , int h, int s) : Plant(given_pos , h , "./src/pics/Pea-Attack.png"){
         HEALTH = h;
+        SHOT_RATE = s;
+        rectMaker();
     };
+    const string file_path = "./src/pics/Pea-Attack.png";
+    void rectMaker();
 private:
     int HEALTH = -1;
-    const string file_path = "";
+    int SHOT_RATE = -1;
 };
 
 class IcePea : public Plant{

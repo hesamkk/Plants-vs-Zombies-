@@ -37,8 +37,6 @@ public:
             rect.height = 250;
             rect.width = 242;
         }
-        
-
         sprite.setTexture(texture);
         sprite.setTextureRect(rect);
         sprite.setScale(0.5 , 0.5);
@@ -49,6 +47,8 @@ public:
     void Mover();
     void NextFrame();
     Sprite get_sprite();
+    float get_y(){ return sprite.getPosition().y; }
+    float get_x(){ return sprite.getPosition().x; }
 
 private:
     float health;

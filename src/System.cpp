@@ -5,6 +5,7 @@
 #include "Plants.hpp"
 #include "Zombies.hpp"
 #include "System.hpp"
+#include "Global.hpp"
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -18,6 +19,8 @@ void System::Run(){
     mt19937 gen(rd()); 
     uniform_int_distribution<int> dis(100, 900);
     RenderWindow window(VideoMode(Window_lenght , Window_hight), "PlantsVsZombies");
+    Vector2f PositonOfPeaCard = {10.0 , 10.0};
+    Pea_Card pea_card (PositonOfPeaCard);
     Texture bg_texture;
     Sprite bg_sprite;
     int random_number;
@@ -37,35 +40,45 @@ void System::Run(){
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
     Time DeltaTime= Time::Zero;
-
+    bool mouseDown = false;
+    bool taged_pea_card = false;
     while(window.isOpen()){
         window.clear();
         Event event;
+        Vector2i Mouse_position = Mouse::getPosition(window);
         while(window.pollEvent(event)){
             if(event.type == Event::Closed){
                 window.close();
             }
 
             if (event.type == sf::Event::MouseButtonPressed){
-                
+                mouseDown = true;
+                if (pea_card.is_tagged(Mouse_position))
+                    taged_pea_card = true;
                 for (auto s : suns)
                 {
-                    
-                    Vector2i Mouse_position = sf::Mouse::getPosition(window);
                     s->isClicked(Mouse_position);
-                    
                 }
-            
             }
+            else if (event.type == Event::MouseButtonReleased){
+                mouseDown = false;
+                if(taged_pea_card && money >= 100 && pea_card.get_avalablity())
+                    if(NewPlant(Mouse_position))
+                        pea_card.Used();
+                taged_pea_card = false;
+                pea_card.RePosition();
+            }
+                
         }
-
+        if (mouseDown && taged_pea_card)
+            pea_card.Drag(Mouse_position);    
         DeltaTime = clock.restart();
         DeltaTime_SunDrop += DeltaTime;
         DeltaTime_ZombieSpawn += DeltaTime;
         DeltaTime_GiantSpawn += DeltaTime;
+        random_number = dis(gen);
         if (DeltaTime_SunDrop >= interval)
         {
-            random_number = dis(gen);
             MakeSun(random_number);
             DeltaTime_SunDrop -= interval;
         }
@@ -79,9 +92,13 @@ void System::Run(){
         }
 
         
-
+        pea_card.Update();
         window.draw(bg_sprite);
+        window.draw(pea_card.get_sprite());
 
+        for (auto p : plants){
+            window.draw(p->sprite);
+        }
         for (auto z : zombies){
             z->Mover();
             z->Update();
@@ -93,9 +110,10 @@ void System::Run(){
             s->Update();
             window.draw(s->get_sprite());
         }
+
         
         
-        
+        // cout << "MousePosition: " << Mouse_position.x << ' ' << Mouse_position.y << endl;
         Updater();
         
         window.display();        
@@ -140,5 +158,33 @@ bool System::IsInTheWindow(Vector2i position){
     }
     else
         return true;
+}
+
+bool System::NewPlant(Vector2i Mouse_position){
+    int xP = -1;
+    int yP= -1;
+    const int area_X_border = 710;
+    for (int i : Possible_Plant_x){
+        if(Mouse_position.x > i && Mouse_position.x < area_X_border)
+            xP = i;
+    }
+    for (int j : Possible_Plant_Y){
+        if(Mouse_position.y > j)
+            yP = j;
+    }
+    cout << "X: " << xP << " Y: " << yP << endl;
+    for (auto p : plants){
+        if(p->IsTouchingMouse(Mouse_position))
+            return false;
+    }
+    if (xP != -1 && yP != -1){
+        Vector2f position = {xP , yP};
+        Pea* new_pea = new Pea(position , 10 , 10 );
+        plants.push_back(new_pea);
+        money -= 100;
+        return true;
+    }
+    else 
+        return false;
 }
 

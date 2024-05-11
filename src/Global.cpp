@@ -26,7 +26,6 @@ bool Sun::isClicked(Vector2i Mouse_position){
     
     if (Sprite_Bounds.contains(static_cast<sf::Vector2f>(Mouse_position)))
     {
-        // MoveUp();
         (*money) = (*money) + 25;
         cout << *money << endl;
         dSpeed = -(2.5);
@@ -37,4 +36,43 @@ bool Sun::isClicked(Vector2i Mouse_position){
         return false;
     
 }
-//test for git.
+
+bool Pea_Card::is_tagged(Vector2i Mouse_position){
+
+    revealing_the_bounds();
+
+    if (Sprite_Bounds.contains(static_cast<sf::Vector2f>(Mouse_position)))
+    {
+        return true;
+    }
+    else 
+        return false;
+}
+
+void Card::Drag(Vector2i Mouse_position){
+    pos.x = Mouse_position.x - 1.5*get_sprite().getTextureRect().width ;
+    pos.y = Mouse_position.y - 1.5*get_sprite().getTextureRect().height ;
+}
+
+void Card::Update(){
+    sprite.setPosition(pos);
+    DeltaTime_NextFrame += clock.restart();
+    if(DeltaTime_NextFrame >= cool_down_time && !Avalablity){
+        Avalablity = true;
+        rect.left = 0;
+        sprite.setTextureRect(rect);
+        DeltaTime_NextFrame = Time::Zero;
+    }
+}
+
+void Pea_Card::RePosition() {
+    pos.x = 10;
+    pos.y = 10;
+}
+
+void Card::Used(){
+    DeltaTime_NextFrame = Time::Zero;
+    Avalablity = false;
+    rect.left += rect.width;
+    sprite.setTextureRect(rect);
+}

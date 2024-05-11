@@ -21,7 +21,6 @@ public:
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
     ~Sun();
     void MoveUpDown();
-    
     bool isClicked(Vector2i Mouse_position);
     void Update();
     Sprite get_sprite() { return sprite; }
@@ -40,16 +39,32 @@ public:
     Card(Vector2f given_pos ,  string file_path){
         if(!texture.loadFromFile(file_path))
             abort();
-        // rect making
+        rect.left = 0;
+        rect.top = 0;
+        rect.height = 27;
+        rect.width = 36;
         sprite.setTexture(texture);
         sprite.setTextureRect(rect);
+        sprite.setScale(3, 3);
         pos = given_pos;
+
     }
+    Sprite get_sprite() { return sprite; }
+    Vector2f pos;
+    void Update();
+    void Drag(Vector2i m_p);
+    FloatRect Sprite_Bounds ;
+    void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
+    bool get_avalablity() { return Avalablity; }
+    void Used();
 private:
     Texture texture;
     Sprite sprite;
     IntRect rect;
-    Vector2f pos;
+    bool Avalablity = true;
+    Clock clock;
+    Time cool_down_time = milliseconds(7000); //needs to be changed
+    Time DeltaTime_NextFrame = Time::Zero;
 };
 
 class SunFlower_Card : public Card {
@@ -57,8 +72,7 @@ public:
     SunFlower_Card(Vector2f given_pos) : Card(given_pos , file_path){
 
     }
-    void is_toggle();
-    void Update();
+    void is_tagged();
 private:
     const string file_path = "";
 };
@@ -68,21 +82,21 @@ public:
     Walnut_Card(Vector2f given_pos) : Card(given_pos , file_path){
 
     }
-    void is_toggle();
-    void Update();
+    void is_tagged(Vector2i m_p);
 private:
     const string file_path = "";
 };
 
 class Pea_Card : public Card {
 public:
-    Pea_Card(Vector2f given_pos) : Card(given_pos , file_path){
+    Pea_Card(Vector2f given_pos) : Card(given_pos ,"./src/pics/PeaCard.png"){
 
     }
-    void is_toggle();
-    void Update();
+    void RePosition();
+    bool is_tagged(Vector2i m_p);
+    const string file_path = "./src/pics/Card-Pea.jpeg";
 private:
-    const string file_path = "";
+    
 };
 
 class IcePea_Card : public Card {
@@ -90,8 +104,7 @@ public:
     IcePea_Card(Vector2f given_pos) : Card(given_pos , file_path){
 
     }
-    void is_toggle();
-    void Update();
+    void is_tagged();
 private:
     const string file_path = "";
 };
