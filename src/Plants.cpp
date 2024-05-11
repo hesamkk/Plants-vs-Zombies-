@@ -8,10 +8,10 @@ using namespace std;
 using namespace sf;
 
 void Pea::rectMaker(){
-    rect.left = 0;
+    rect.left = 3;
     rect.top = 0;
-    rect.height = 35;
-    rect.width = 33;
+    rect.height = 33;
+    rect.width = 31;
     sprite.setTextureRect(rect);
 }
 
@@ -51,10 +51,13 @@ bool Plant::IsTouchingMouse(Vector2i Mouse_position){
 void Pea::NextFrame(){
     DeltaTime_NextFrame += clock.restart();
     if(DeltaTime_NextFrame >= frame_changeTime){
-    rect.left += rect.width;
+    rect.left += 31.2; // needs a magic valeu or something
+    // cout<<rect.width<<endl;
     if (rect.left >= 250 )
         rect.left =0;
     sprite.setTextureRect(rect);
     DeltaTime_NextFrame = Time::Zero;
     }
 }
+
+

@@ -30,8 +30,10 @@ public:
     void status_setter(int given_status ){ status = given_status; }
     int get_status(){ return status; }
     virtual void NextFrame(){ };
+    void ChangeTheAnimation(string new_file_path){};//hmmmmmm?
     IntRect rect;
     Sprite sprite;
+    
 private:
     Texture texture;
     FloatRect Sprite_Bounds;
@@ -58,20 +60,24 @@ private:
 
 class Pea : public Plant{
 public:
-    Pea(Vector2f given_pos , int h, int s) : Plant(given_pos , h , "./src/pics/Pea-Attack-NBG.png"){
+    Pea(Vector2f given_pos , int h, int s, string file_path = "./src/pics/Pea-Attack-NBG.png" ) : Plant(given_pos , h , file_path){
         HEALTH = h;
         SHOT_RATE = s;
         rectMaker();
+        this -> file_path = file_path;
     };
-    const string file_path = "./src/pics/Pea-Attack-NBG.png";
+    
     void rectMaker();
     void NextFrame();
+    void ChangeTheAnimation(string new_file_path) {file_path = new_file_path;cout<<"kk"<<endl;}//it dosent fucking work and im pissed off and tired
+
 private:
     Clock clock;
     Time frame_changeTime = milliseconds(200);
     Time DeltaTime_NextFrame = Time::Zero;
     int HEALTH = -1;
     int SHOT_RATE = -1;
+    string file_path;
 };
 
 class IcePea : public Plant{

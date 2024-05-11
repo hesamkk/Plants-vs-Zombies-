@@ -27,11 +27,16 @@ void Zombie::Update(){
 }
 
 void Zombie::NextFrame(){
+    
     DeltaTime_NextFrame += clock.restart();
+    
     if(DeltaTime_NextFrame >= frame_changeTime){
+    
     rect.left += rect.width;
-    if (rect.left >= 1000 )
+    
+    if (rect.left >=  2000 )
         rect.left =0;
+    
     sprite.setTextureRect(rect);
     DeltaTime_NextFrame = Time::Zero;
     }

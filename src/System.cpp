@@ -106,8 +106,12 @@ void System::Run(){
                 p->status_setter(1);
                 attackingPlants.push_back(p);
             }
-            else
+            else{
                 p->status_setter(0);
+                
+                p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");
+            }
+                
             p->Updater();
             window.draw(p->sprite);
         }
