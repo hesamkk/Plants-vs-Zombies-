@@ -27,8 +27,9 @@ public:
     void MakeGiant(float s , float b , float c , int r);
     void Updater();
     bool IsInTheWindow(Vector2i position);
-    bool NewPlant(Vector2i m_p);
+    bool NewPea(Vector2i m_p);
     void MakeShot(Vector2f p_p);
+
 private:
     vector <Plant*> plants;
     vector <Zombie*> zombies;

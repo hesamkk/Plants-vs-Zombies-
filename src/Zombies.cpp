@@ -22,7 +22,7 @@ void Zombie::Update(){
     sprite.setPosition(pos);
     if (pos.x < 0)
     {
-        cout << "kk"<<endl;
+        // cout << "kk"<<endl;
     }
 }
 
@@ -55,4 +55,27 @@ bool Zombie::Is_Shot(Vector2i pea_position){
         
         return false;
 
+}
+
+bool Zombie::Is_eating(Vector2f plant_position){
+    revealing_the_bounds();
+    
+    if (Sprite_Bounds.contains(plant_position))
+    {
+            
+        return true;
+        
+    }
+    else
+        
+        return false;
+
+}
+
+void Zombie::Attack(){
+    pos.x += speed;
+}
+
+void Zombie::Damage(const int& d){
+    health -= d;
 }

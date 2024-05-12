@@ -33,14 +33,16 @@ void System::Run(){
 
     Clock clock;
     Time interval = milliseconds(2000); 
-    Time NormalZombieSpawnRate = milliseconds(5000);
-    Time GiantSpawnRate = milliseconds(7000);
+    Time NormalZombieSpawnRate = milliseconds(3000);
+    Time GiantSpawnRate = milliseconds(5000);
     Time ShotRate = milliseconds(1000);
+    Time ZombieHitRate = milliseconds(500);
     Time DeltaTime_SunDrop = Time::Zero;
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
     Time DeltaTime_Shot = Time::Zero;
     Time DeltaTime_Shot_Saver = Time::Zero;
+    Time DeltaTime_ZombieHit = Time::Zero;
     Time DeltaTime= Time::Zero;
     bool mouseDown = false;
     bool taged_pea_card = false;
@@ -65,7 +67,7 @@ void System::Run(){
             else if (event.type == Event::MouseButtonReleased){
                 mouseDown = false;
                 if(taged_pea_card && money >= 100 && pea_card.get_avalablity())
-                    if(NewPlant(Mouse_position))
+                    if(NewPea(Mouse_position))
                         pea_card.Used();
                 taged_pea_card = false;
                 pea_card.RePosition();
@@ -79,6 +81,7 @@ void System::Run(){
         DeltaTime_ZombieSpawn += DeltaTime;
         DeltaTime_GiantSpawn += DeltaTime;
         DeltaTime_Shot += DeltaTime;
+        DeltaTime_ZombieHit += DeltaTime;
         random_number = dis(gen);
         if (DeltaTime_SunDrop >= interval)
         {
@@ -86,11 +89,11 @@ void System::Run(){
             DeltaTime_SunDrop -= interval;
         }
         if (DeltaTime_ZombieSpawn >= NormalZombieSpawnRate){
-            MakeZombie(0.05, 10 , 10 , random_number);    //Needs to be changed...
+            MakeZombie(0.05, 60 , 10 , random_number);    //Needs to be changed...
             DeltaTime_ZombieSpawn -= NormalZombieSpawnRate;
         }
         if (DeltaTime_GiantSpawn >= GiantSpawnRate){
-            MakeGiant(0.15 , 100 , 100 , random_number);
+            MakeGiant(0.15 , 100 , 20 , random_number);   //Needs to be changed... acording to csv file;
             DeltaTime_GiantSpawn -= GiantSpawnRate;
         }
 
@@ -104,12 +107,12 @@ void System::Run(){
             if(p->IsThereZombie(zombies))
             {
                 p->status_setter(1);
+                // p -> ChangeTheAnimation("./src/pics/Pea-Attack-NBG.png");
                 attackingPlants.push_back(p);
             }
-            else{
-                p->status_setter(0);
-                
-                p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");
+            else{               
+                p->status_setter(0);                
+                // p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");               
             }
                 
             p->Updater();
@@ -124,6 +127,23 @@ void System::Run(){
                 DeltaTime_Shot = Time::Zero;
             }
         }
+    
+        for(auto p : plants){
+            for(auto z : zombies){
+                Vector2f MiddlePosition = {p->sprite.getPosition().x + p->rect.width/2 , p->sprite.getPosition().y + p->rect.height/2};
+                if(z->Is_eating(MiddlePosition)){
+                    z->Attack();
+                    if (DeltaTime_ZombieHit >= ZombieHitRate){  
+                        p->Damage(z->get_damage());
+                    }
+                }
+            }
+        }
+        if (DeltaTime_ZombieHit >= ZombieHitRate)
+            DeltaTime_ZombieHit = Time::Zero;
+
+        Handler();
+        Updater();
 
         for (auto z : zombies){
             z->Mover();
@@ -144,9 +164,7 @@ void System::Run(){
         
         
         // cout << "MousePosition: " << Mouse_position.x << ' ' << Mouse_position.y << endl;
-        Updater();
-        Handler();
-        
+
         window.display();        
     }
 }
@@ -161,6 +179,8 @@ void System:: MakeSun(int random_number){
 void System::Updater(){
     vector<Sun*> trashs;
     vector<Shot*> trashot;
+    vector<Plant*> trashp;
+    vector<Zombie*> trashz;
     for(auto s : suns){
         if((s->get_sprite().getPosition().y >= Window_hight) || (s->get_sprite().getPosition().y <= -120) )
             trashs.push_back(s);
@@ -177,6 +197,23 @@ void System::Updater(){
         shots.erase(remove(shots.begin() , shots.end() , sh_),shots.end());
         delete sh_;
     }
+    for(auto p : plants){
+        if(p->get_health() <= 0)
+            trashp.push_back(p);
+    }
+    for(auto p_ : trashp){
+        plants.erase(remove(plants.begin() , plants.end() , p_),plants.end());
+        delete p_;
+    }
+    for (auto z : zombies){
+        if(z->get_health() <= 0)
+            trashz.push_back(z);
+    }
+    for(auto z_ : trashz){
+        zombies.erase(remove(zombies.begin() , zombies.end() , z_),zombies.end());
+        delete z_;
+    }
+
 }
 
 void System::MakeZombie(float speed_, float health_, float damage_,int random_number){
@@ -200,7 +237,7 @@ bool System::IsInTheWindow(Vector2i position){
         return true;
 }
 
-bool System::NewPlant(Vector2i Mouse_position){
+bool System::NewPea(Vector2i Mouse_position){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -219,7 +256,7 @@ bool System::NewPlant(Vector2i Mouse_position){
     }
     if (xP != -1 && yP != -1){
         Vector2f position = {xP , yP};
-        Pea* new_pea = new Pea(position , 10 , 10 );
+        Pea* new_pea = new Pea(position , 100 , 100 );
         plants.push_back(new_pea);
         money -= 100;
         return true;
@@ -229,30 +266,24 @@ bool System::NewPlant(Vector2i Mouse_position){
 }
 
 void System::MakeShot(Vector2f Plant_position){
-    Vector2f p_ = {Plant_position.x+20 , Plant_position.y};
+    Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
     Shot* new_shot = new Shot(p_);
     shots.push_back(new_shot);    
 }
 
 void System::Handler(){
-    vector<Zombie*> trashz;
     vector<Shot*> trashot;
     for(auto z : zombies){
         for(auto s: shots){
             if(z -> Is_Shot(Vector2i(s -> get_sprite().getPosition())))
             {
-                trashz.push_back(z);
+                z->Damage(20);
                 trashot.push_back(s);
             }
         }
-    }
-    for (auto z_ : trashz){
-        zombies.erase(remove(zombies.begin() , zombies.end() , z_),zombies.end());
-        delete z_;        
     }
     for (auto s_ : trashot){
         shots.erase(remove(shots.begin() , shots.end() , s_),shots.end());
         delete s_;
     }
 }
-

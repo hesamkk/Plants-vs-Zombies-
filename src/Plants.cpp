@@ -32,6 +32,7 @@ void Plant::Updater(){
         NextFrame();
     }
     else{
+        NextFrame();
         rect.left = 0;
         sprite.setTextureRect(rect);        
     }
@@ -53,7 +54,7 @@ void Pea::NextFrame(){
     if(DeltaTime_NextFrame >= frame_changeTime){
     rect.left += 31.2; // needs a magic valeu or something
     // cout<<rect.width<<endl;
-    if (rect.left >= 250 )
+    if (rect.left >= 200 )
         rect.left =0;
     sprite.setTextureRect(rect);
     DeltaTime_NextFrame = Time::Zero;

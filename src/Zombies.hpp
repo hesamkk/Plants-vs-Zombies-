@@ -46,12 +46,18 @@ public:
     void Update();
     void Mover();
     void NextFrame();
+    void Damage(const int& d);
     Sprite get_sprite();
     IntRect get_rect(){ return rect; }
     float get_y(){ return sprite.getPosition().y; }
     float get_x(){ return sprite.getPosition().x; }
     bool Is_Shot(Vector2i pea_position);
+    bool Is_eating(Vector2f pea_position);
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
+    void Attack();
+    float get_damage() { return damage; }
+    float get_health() { return health; }
+    int get_status() { return status; }
 private:
     float health;
     float speed;
@@ -63,7 +69,7 @@ private:
     Clock clock;
     Time frame_changeTime = milliseconds(200);
     Time DeltaTime_NextFrame = Time::Zero;
-    int status = 0;
+    int status = 0;      // 0 is idle 1 is attacking
     int type;
     const string nz_file_path = "./src/pics/ZombieSP.png";
     const string giant_file_path ="./src/pics/GiantSP.png";

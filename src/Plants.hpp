@@ -14,7 +14,9 @@ public:
         pos = given_pos;
         health = h;
         if(!texture.loadFromFile(texture_adr))
+        {
             abort();
+        }
         sprite.setTexture(texture);
         sprite.setTextureRect(rect);
         sprite.setScale(1.7, 1.7);
@@ -29,18 +31,22 @@ public:
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
     void status_setter(int given_status ){ status = given_status; }
     int get_status(){ return status; }
+    float get_health() { return health; }
+    void Damage(float dam) { health -= dam; }
     virtual void NextFrame(){ };
-    void ChangeTheAnimation(string new_file_path){};//hmmmmmm?
+    void ChangeTheAnimation(string new_file_path){
+        cout << "Texture changed to: " << new_file_path << endl;
+        if(!texture.loadFromFile(new_file_path))
+            abort();
+    };
     IntRect rect;
     Sprite sprite;
-    
 private:
     Texture texture;
     FloatRect Sprite_Bounds;
     Vector2f pos;
     int health;
     int status = 0; //0 for Normal  -   1 for Attack
-
 };
 
 
@@ -69,7 +75,6 @@ public:
     
     void rectMaker();
     void NextFrame();
-    void ChangeTheAnimation(string new_file_path) {file_path = new_file_path;cout<<"kk"<<endl;}//it dosent fucking work and im pissed off and tired
 
 private:
     Clock clock;
