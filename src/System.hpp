@@ -23,11 +23,15 @@ public:
     void Run();
     void RenderBG();
     void MakeSun(int r);
-    void MakeZombie(float s, float b, float c, int r);
-    void MakeGiant(float s , float b , float c , int r);
+    void MakeZombie(const float& s, const float& b, const float& c, const int r);
+    void MakeGiant(const float& s , const float& b , const float& c , const int r);
     void Updater();
     bool IsInTheWindow(Vector2i position);
     bool NewPea(Vector2i m_p);
+    bool NewWalnut(Vector2i m_p);
+    bool NewSunFlower(Vector2i m_p);
+    bool NewIcePea(Vector2i m_p);
+    bool NewMelon(Vector2i m_p);
     void MakeShot(Vector2f p_p);
 
 private:

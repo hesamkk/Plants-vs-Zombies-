@@ -39,7 +39,7 @@ bool Sun::isClicked(Vector2i Mouse_position){
     
 }
 
-bool Pea_Card::is_tagged(Vector2i Mouse_position){
+bool Card::is_tagged(Vector2i Mouse_position){
 
     revealing_the_bounds();
 
@@ -52,8 +52,8 @@ bool Pea_Card::is_tagged(Vector2i Mouse_position){
 }
 
 void Card::Drag(Vector2i Mouse_position){
-    pos.x = Mouse_position.x - 1.5*get_sprite().getTextureRect().width ;
-    pos.y = Mouse_position.y - 1.5*get_sprite().getTextureRect().height ;
+    pos.x = Mouse_position.x - get_sprite().getTextureRect().width/2 ;
+    pos.y = Mouse_position.y - get_sprite().getTextureRect().height/2 ;
 }
 
 void Card::Update(){
@@ -70,6 +70,21 @@ void Card::Update(){
 void Pea_Card::RePosition() {
     pos.x = 10;
     pos.y = 10;
+}
+
+void Walnut_Card::RePosition(){
+    pos.x = 10;
+    pos.y = 100;
+}
+
+void SunFlower_Card::RePosition(){
+    pos.x = 10;
+    pos.y = 190;
+}
+
+void IcePea_Card::RePosition(){
+    pos.x = 10;
+    pos.y = 280;
 }
 
 void Card::Used(){

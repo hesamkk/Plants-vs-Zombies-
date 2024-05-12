@@ -41,11 +41,11 @@ public:
             abort();
         rect.left = 0;
         rect.top = 0;
-        rect.height = 27;
-        rect.width = 36;
+        rect.height = 90;
+        rect.width = 63;
         sprite.setTexture(texture);
         sprite.setTextureRect(rect);
-        sprite.setScale(3, 3);
+        sprite.setScale(1, 1);
         pos = given_pos;
 
     }
@@ -57,6 +57,7 @@ public:
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
     bool get_avalablity() { return Avalablity; }
     void Used();
+    bool is_tagged(Vector2i m_p);
 private:
     Texture texture;
     Sprite sprite;
@@ -69,44 +70,49 @@ private:
 
 class SunFlower_Card : public Card {
 public:
-    SunFlower_Card(Vector2f given_pos) : Card(given_pos , file_path){
+    SunFlower_Card(Vector2f given_pos) : Card(given_pos , "./src/pics/SunFlower-Card-New.png"){
 
     }
-    void is_tagged();
+    void RePosition();
 private:
-    const string file_path = "";
 };
 
 class Walnut_Card : public Card {
 public:
-    Walnut_Card(Vector2f given_pos) : Card(given_pos , file_path){
+    Walnut_Card(Vector2f given_pos) : Card(given_pos , "./src/pics/Walnut-Car-New.png"){
 
     }
-    void is_tagged(Vector2i m_p);
+    void RePosition();
 private:
-    const string file_path = "";
+    
 };
 
 class Pea_Card : public Card {
 public:
-    Pea_Card(Vector2f given_pos) : Card(given_pos ,"./src/pics/PeaCard.png"){
+    Pea_Card(Vector2f given_pos) : Card(given_pos ,"./src/pics/Pea-Car-New.png"){
 
     }
     void RePosition();
-    bool is_tagged(Vector2i m_p);
-    const string file_path = "./src/pics/Card-Pea.jpeg";
 private:
     
 };
 
 class IcePea_Card : public Card {
 public:
-    IcePea_Card(Vector2f given_pos) : Card(given_pos , file_path){
+    IcePea_Card(Vector2f given_pos) : Card(given_pos , "./src/pics/IcePea-Card-New.png"){
 
     }
-    void is_tagged();
+    void RePosition();
 private:
-    const string file_path = "";
+};
+
+class Melon_Card : public Card {
+public:
+    Melon_Card(Vector2f given_pos) : Card(given_pos , "./src/pics/Melon-Card-New.png"){
+
+    }
+    void RePosition();
+private:
 };
 
 class Shot{

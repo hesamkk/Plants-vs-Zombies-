@@ -12,15 +12,21 @@ using namespace std;
 using namespace sf;
 
 const string bg_pic_path = "./src/pics/background.png";
-
+const Vector2f PositonOfPeaCard = {10.0 , 10.0};
+const Vector2f PositonOfWalNutCard = {10.0 , 100.0};
+const Vector2f PositonOfSunFlowerCard = {10.0 , 190.0};
+const Vector2f PositonOfIcePeaCard = {10.0 , 280.0};
 
 void System::Run(){
     random_device rd;  
     mt19937 gen(rd()); 
     uniform_int_distribution<int> dis(100, 900);
     RenderWindow window(VideoMode(Window_lenght , Window_hight), "PlantsVsZombies");
-    Vector2f PositonOfPeaCard = {10.0 , 10.0};
+
     Pea_Card pea_card (PositonOfPeaCard);
+    Walnut_Card wal_card (PositonOfWalNutCard);
+    SunFlower_Card sunf_card (PositonOfSunFlowerCard);
+    IcePea_Card ipe_card (PositonOfIcePeaCard);
     Texture bg_texture;
     Sprite bg_sprite;
     int random_number;
@@ -32,11 +38,11 @@ void System::Run(){
     bg_sprite.setTexture(bg_texture);
 
     Clock clock;
-    Time interval = milliseconds(2000); 
-    Time NormalZombieSpawnRate = milliseconds(3000);
-    Time GiantSpawnRate = milliseconds(5000);
-    Time ShotRate = milliseconds(1000);
-    Time ZombieHitRate = milliseconds(500);
+    const Time interval = milliseconds(2000); 
+    const Time NormalZombieSpawnRate = milliseconds(5000);
+    const Time GiantSpawnRate = milliseconds(10000);
+    const Time ShotRate = milliseconds(1000);
+    const Time ZombieHitRate = milliseconds(500);
     Time DeltaTime_SunDrop = Time::Zero;
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
@@ -46,6 +52,9 @@ void System::Run(){
     Time DeltaTime= Time::Zero;
     bool mouseDown = false;
     bool taged_pea_card = false;
+    bool taged_wal_card = false;
+    bool taged_sunf_card =false;
+    bool taged_ipe_card = false;
     while(window.isOpen()){
         window.clear();
         Event event;
@@ -59,6 +68,12 @@ void System::Run(){
                 mouseDown = true;
                 if (pea_card.is_tagged(Mouse_position))
                     taged_pea_card = true;
+                else if(wal_card.is_tagged(Mouse_position))
+                    taged_wal_card = true;
+                else if(sunf_card.is_tagged(Mouse_position))
+                    taged_sunf_card = true;
+                else if(ipe_card.is_tagged(Mouse_position))
+                    taged_ipe_card = true;                
                 for (auto s : suns)
                 {
                     s->isClicked(Mouse_position);
@@ -66,16 +81,50 @@ void System::Run(){
             }
             else if (event.type == Event::MouseButtonReleased){
                 mouseDown = false;
-                if(taged_pea_card && money >= 100 && pea_card.get_avalablity())
+                if(taged_pea_card && money >= 100 && pea_card.get_avalablity()){
                     if(NewPea(Mouse_position))
                         pea_card.Used();
-                taged_pea_card = false;
-                pea_card.RePosition();
+                }
+                else if(taged_wal_card && money >= 50 && wal_card.get_avalablity()){
+                    if(NewWalnut(Mouse_position))
+                        wal_card.Used();
+                }
+                else if(taged_sunf_card && money >= 50 && sunf_card.get_avalablity()){
+                    if(NewPea(Mouse_position))
+                        sunf_card.Used();
+                }
+                else if(taged_ipe_card && money >= 50 && ipe_card.get_avalablity()){
+                    if(NewPea(Mouse_position))
+                        ipe_card.Used();
+                }
+                if(taged_pea_card){                
+                    taged_pea_card = false;
+                    pea_card.RePosition();
+                }
+                else if(taged_wal_card){
+                    taged_wal_card = false;
+                    wal_card.RePosition();
+                }
+                else if(taged_sunf_card){
+                    taged_sunf_card = false;
+                    sunf_card.RePosition();
+                }
+                else if(taged_ipe_card){
+                    taged_ipe_card = false;
+                    ipe_card.RePosition();
+                }
+
             }
                 
         }
         if (mouseDown && taged_pea_card)
             pea_card.Drag(Mouse_position);    
+        else if(mouseDown && taged_wal_card)
+            wal_card.Drag(Mouse_position);
+        else if(mouseDown && taged_sunf_card)
+            sunf_card.Drag(Mouse_position);
+        else if(mouseDown && taged_ipe_card)
+            ipe_card.Drag(Mouse_position);
         DeltaTime = clock.restart();
         DeltaTime_SunDrop += DeltaTime;
         DeltaTime_ZombieSpawn += DeltaTime;
@@ -99,11 +148,18 @@ void System::Run(){
 
         
         pea_card.Update();
+        wal_card.Update();
+        sunf_card.Update();
+        ipe_card.Update();
         window.draw(bg_sprite);
         window.draw(pea_card.get_sprite());
+        window.draw(wal_card.get_sprite());
+        window.draw(sunf_card.get_sprite());
+        window.draw(ipe_card.get_sprite());
         vector<Plant*> attackingPlants;
 
         for (auto p : plants){
+            if(Pea* pea = dynamic_cast<Pea*>(p))
             if(p->IsThereZombie(zombies))
             {
                 p->status_setter(1);
@@ -114,11 +170,11 @@ void System::Run(){
                 p->status_setter(0);                
                 // p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");               
             }
-                
+        }
+        for (auto p: plants){
             p->Updater();
             window.draw(p->sprite);
         }
-
         DeltaTime_Shot_Saver = DeltaTime_Shot;
         for (auto p : attackingPlants){
             DeltaTime_Shot = DeltaTime_Shot_Saver;
@@ -176,7 +232,7 @@ void System:: MakeSun(int random_number){
         suns.push_back(new_sun);    
 }
 
-void System::Updater(){
+void System::Updater(){                     ///We can find a way to not always check this func
     vector<Sun*> trashs;
     vector<Shot*> trashot;
     vector<Plant*> trashp;
@@ -213,16 +269,15 @@ void System::Updater(){
         zombies.erase(remove(zombies.begin() , zombies.end() , z_),zombies.end());
         delete z_;
     }
-
 }
 
-void System::MakeZombie(float speed_, float health_, float damage_,int random_number){
+void System::MakeZombie(const float& speed_, const float& health_, const float& damage_,const int random_number){
     Vector2f p_ = {1000 , Y_array_of_zombies[random_number%5]};
     Zombie* new_zombie = new Zombie(p_ , health_ , speed_ , damage_ , 0);
     zombies.push_back(new_zombie);
 }
 
-void System::MakeGiant(float speed_, float health_, float damage_,int random_number){
+void System::MakeGiant(const float& speed_, const float& health_, const float& damage_,const int random_number){
     Vector2f p_ = {1000 , Y_array_of_zombies[random_number%5]};
     Zombie* new_zombie = new Zombie(p_ , health_ , speed_ , damage_ , 1);
     zombies.push_back(new_zombie);
@@ -249,7 +304,6 @@ bool System::NewPea(Vector2i Mouse_position){
         if(Mouse_position.y > j)
             yP = j;
     }
-    cout << "X: " << xP << " Y: " << yP << endl;
     for (auto p : plants){
         if(p->IsTouchingMouse(Mouse_position))
             return false;
@@ -286,4 +340,31 @@ void System::Handler(){
         shots.erase(remove(shots.begin() , shots.end() , s_),shots.end());
         delete s_;
     }
+}
+
+bool System::NewWalnut(Vector2i Mouse_position){
+    int xP = -1;
+    int yP= -1;
+    const int area_X_border = 710;
+    for (int i : Possible_Plant_x){
+        if(Mouse_position.x > i && Mouse_position.x < area_X_border)
+            xP = i;
+    }
+    for (int j : Possible_Plant_Y){
+        if(Mouse_position.y > j)
+            yP = j;
+    }
+    for (auto p : plants){
+        if(p->IsTouchingMouse(Mouse_position))
+            return false;
+    }
+    if (xP != -1 && yP != -1){
+        Vector2f position = {xP , yP};
+        Walnut* new_walnut = new Walnut(position , 500);
+        plants.push_back(new_walnut);
+        money -= 50;
+        return true;
+    }
+    else 
+        return false;
 }

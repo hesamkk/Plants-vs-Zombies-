@@ -97,9 +97,11 @@ private:
 
 class Walnut : public Plant{
 public:
-    Walnut(Vector2f given_pos , int h) : Plant(given_pos , h , file_path){
+    Walnut(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/Pea-Attack-NBG.png" ){
         HEALTH = h;
+        rectMaker();
     };
+    void rectMaker();
 private:
     int HEALTH = -1;
     const string file_path = "";
