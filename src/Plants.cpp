@@ -19,9 +19,24 @@ void Walnut::rectMaker(){
     rect.left = 3;
     rect.top = 0;
     rect.height = 33;
-    rect.width = 38;
-    sprite.setTextureRect(rect); 
-    
+    rect.width = 31;
+    sprite.setTextureRect(rect);   
+}
+
+void SunFlower::rectMaker(){
+    rect.left = 3;
+    rect.top = 0;
+    rect.height = 33;
+    rect.width = 31;
+    sprite.setTextureRect(rect);   
+}
+
+void IcePea::rectMaker(){
+    rect.left = 3;
+    rect.top = 0;
+    rect.height = 33;
+    rect.width = 31;
+    sprite.setTextureRect(rect);   
 }
 
 bool Plant::IsThereZombie(const vector<Zombie*> zombies){
@@ -62,8 +77,18 @@ void Pea::NextFrame(){
     DeltaTime_NextFrame += clock.restart();
     if(DeltaTime_NextFrame >= frame_changeTime){
     rect.left += 31.2; // needs a magic valeu or something
-    // cout<<rect.width<<endl;
     if (rect.left >= 200 )
+        rect.left =0;
+    sprite.setTextureRect(rect);
+    DeltaTime_NextFrame = Time::Zero;
+    }
+}
+
+void IcePea::NextFrame(){
+    DeltaTime_NextFrame += clock.restart();
+    if(DeltaTime_NextFrame >= frame_changeTime){
+    rect.left += 30; // needs a magic valeu or something
+    if (rect.left >= 90 )
         rect.left =0;
     sprite.setTextureRect(rect);
     DeltaTime_NextFrame = Time::Zero;

@@ -22,6 +22,9 @@ Sun::~Sun(){
 
 Shot::~Shot(){
 }
+IceShot::~IceShot(){    
+}
+
 bool Sun::isClicked(Vector2i Mouse_position){
     
     revealing_the_bounds();
@@ -95,6 +98,11 @@ void Card::Used(){
 }
 
 void Shot::Move(){
+    pos.x += 1;
+    sprite.setPosition(pos);
+}
+
+void IceShot::Move(){
     pos.x += 1;
     sprite.setPosition(pos);
 }

@@ -19,10 +19,10 @@ const Vector2f PositonOfIcePeaCard = {10.0 , 280.0};
 
 void System::Run(){
     random_device rd;  
-    mt19937 gen(rd()); 
+    mt19937 gen(rd());   
     uniform_int_distribution<int> dis(100, 900);
     RenderWindow window(VideoMode(Window_lenght , Window_hight), "PlantsVsZombies");
-
+    DeathScreen death_screen;
     Pea_Card pea_card (PositonOfPeaCard);
     Walnut_Card wal_card (PositonOfWalNutCard);
     SunFlower_Card sunf_card (PositonOfSunFlowerCard);
@@ -40,25 +40,48 @@ void System::Run(){
     Clock clock;
     const Time interval = milliseconds(2000); 
     const Time NormalZombieSpawnRate = milliseconds(5000);
-    const Time GiantSpawnRate = milliseconds(10000);
+    const Time GiantSpawnRate = milliseconds(7000);
     const Time ShotRate = milliseconds(1000);
     const Time ZombieHitRate = milliseconds(500);
+    const Time SunSpawnRate = milliseconds(3000);
+    const Time IceShotRate = milliseconds(1000);
     Time DeltaTime_SunDrop = Time::Zero;
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
     Time DeltaTime_Shot = Time::Zero;
     Time DeltaTime_Shot_Saver = Time::Zero;
+    Time DeltaTime_IceShot_Saver = Time::Zero;
     Time DeltaTime_ZombieHit = Time::Zero;
+    Time DeltaTime_SunSpawn = Time::Zero;
+    Time DeltaTime_IceShot = Time::Zero;
     Time DeltaTime= Time::Zero;
     bool mouseDown = false;
     bool taged_pea_card = false;
     bool taged_wal_card = false;
     bool taged_sunf_card =false;
     bool taged_ipe_card = false;
+    bool flag = false;
     while(window.isOpen()){
         window.clear();
         Event event;
         Vector2i Mouse_position = Mouse::getPosition(window);
+        for(auto z : zombies){
+            if(z->IsCross()){
+                Event event_;
+                while(true){
+                    window.clear();
+                    window.draw(bg_sprite);
+                    window.draw(death_screen.get_sprite());
+                    while(window.pollEvent(event_)){
+                    if(event_.type == Event::Closed){
+                        window.close();
+                        return;
+                    }                       
+                    }
+                    window.display();
+                }
+            }
+        }
         while(window.pollEvent(event)){
             if(event.type == Event::Closed){
                 window.close();
@@ -90,11 +113,11 @@ void System::Run(){
                         wal_card.Used();
                 }
                 else if(taged_sunf_card && money >= 50 && sunf_card.get_avalablity()){
-                    if(NewPea(Mouse_position))
+                    if(NewSunFlower(Mouse_position))
                         sunf_card.Used();
                 }
-                else if(taged_ipe_card && money >= 50 && ipe_card.get_avalablity()){
-                    if(NewPea(Mouse_position))
+                else if(taged_ipe_card && money >= 100 && ipe_card.get_avalablity()){
+                    if(NewIcePea(Mouse_position))
                         ipe_card.Used();
                 }
                 if(taged_pea_card){                
@@ -131,10 +154,13 @@ void System::Run(){
         DeltaTime_GiantSpawn += DeltaTime;
         DeltaTime_Shot += DeltaTime;
         DeltaTime_ZombieHit += DeltaTime;
+        DeltaTime_SunSpawn += DeltaTime;
+        DeltaTime_IceShot += DeltaTime;
         random_number = dis(gen);
         if (DeltaTime_SunDrop >= interval)
         {
-            MakeSun(random_number);
+            Vector2f random_pos = {random_number , -100};
+            MakeSun(random_pos);
             DeltaTime_SunDrop -= interval;
         }
         if (DeltaTime_ZombieSpawn >= NormalZombieSpawnRate){
@@ -157,6 +183,8 @@ void System::Run(){
         window.draw(sunf_card.get_sprite());
         window.draw(ipe_card.get_sprite());
         vector<Plant*> attackingPlants;
+        vector<Plant*> generatingPlants;
+        vector<Plant*> attackingIcyPlants;
 
         for (auto p : plants){
             if(Pea* pea = dynamic_cast<Pea*>(p))
@@ -171,6 +199,24 @@ void System::Run(){
                 // p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");               
             }
         }
+        for (auto p : plants){
+            if(IcePea* icepea = dynamic_cast<IcePea*>(p))
+            if(p->IsThereZombie(zombies))
+            {
+                p->status_setter(1);
+                // p -> ChangeTheAnimation("./src/pics/Pea-Attack-NBG.png");
+                attackingIcyPlants.push_back(p);
+            }
+            else{               
+                p->status_setter(0);                
+                // p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");               
+            }
+        }
+
+        for (auto p : plants){
+            if(SunFlower* sun = dynamic_cast<SunFlower*>(p))
+                generatingPlants.push_back(p);
+        }
         for (auto p: plants){
             p->Updater();
             window.draw(p->sprite);
@@ -183,6 +229,25 @@ void System::Run(){
                 DeltaTime_Shot = Time::Zero;
             }
         }
+        DeltaTime_IceShot_Saver = DeltaTime_IceShot;
+        for (auto p : attackingIcyPlants){
+            DeltaTime_IceShot = DeltaTime_IceShot_Saver;
+            if(DeltaTime_IceShot >= IceShotRate){
+                MakeIceShot(p->sprite.getPosition());
+                DeltaTime_IceShot = Time::Zero;
+            }
+        }
+
+        flag = 0;
+        for (auto p : generatingPlants){
+            if(DeltaTime_SunSpawn >= SunSpawnRate)
+            {
+                flag = true;
+                MakeSun(p->sprite.getPosition());
+            }
+        }
+        if(flag)
+            DeltaTime_SunSpawn = Time::Zero;
     
         for(auto p : plants){
             for(auto z : zombies){
@@ -211,6 +276,10 @@ void System::Run(){
             sh->Move();
             window.draw(sh->get_sprite());
         }
+        for(auto is: iceShots){
+            is->Move();
+            window.draw(is->get_sprite());
+        }
         for (auto s : suns){
             s->MoveUpDown();
             s->Update();
@@ -226,8 +295,7 @@ void System::Run(){
 }
 
 
-void System:: MakeSun(int random_number){
-        Vector2f p = {random_number , -100} ;
+void System:: MakeSun(Vector2f p){
         Sun* new_sun = new Sun(p , &money);
         suns.push_back(new_sun);    
 }
@@ -327,17 +395,35 @@ void System::MakeShot(Vector2f Plant_position){
 
 void System::Handler(){
     vector<Shot*> trashot;
-    for(auto z : zombies){
-        for(auto s: shots){
+    vector<IceShot*> trashi;
+    for(auto s : shots){
+        for(auto z: zombies){
             if(z -> Is_Shot(Vector2i(s -> get_sprite().getPosition())))
             {
                 z->Damage(20);
                 trashot.push_back(s);
+                break;
             }
         }
     }
+    for (auto s: iceShots){
+        for(auto z: zombies){
+            if(z -> Is_Shot(Vector2i(s -> get_sprite().getPosition())))
+            {
+                z->Damage(20);
+                z->Freeze();
+                trashi.push_back(s);
+                break;
+            }            
+        }
+    }
+
     for (auto s_ : trashot){
         shots.erase(remove(shots.begin() , shots.end() , s_),shots.end());
+        delete s_;
+    }
+    for (auto s_ : trashi){
+        iceShots.erase(remove(iceShots.begin() , iceShots.end() , s_),iceShots.end());
         delete s_;
     }
 }
@@ -367,4 +453,64 @@ bool System::NewWalnut(Vector2i Mouse_position){
     }
     else 
         return false;
+}
+
+bool System::NewSunFlower(Vector2i Mouse_position){
+    int xP = -1;
+    int yP= -1;
+    const int area_X_border = 710;
+    for (int i : Possible_Plant_x){
+        if(Mouse_position.x > i && Mouse_position.x < area_X_border)
+            xP = i;
+    }
+    for (int j : Possible_Plant_Y){
+        if(Mouse_position.y > j)
+            yP = j;
+    }
+    for (auto p : plants){
+        if(p->IsTouchingMouse(Mouse_position))
+            return false;
+    }
+    if (xP != -1 && yP != -1){
+        Vector2f position = {xP , yP};
+        SunFlower* new_sunflower = new SunFlower(position , 500);
+        plants.push_back(new_sunflower);
+        money -= 50;
+        return true;
+    }
+    else 
+        return false;
+}
+
+bool System::NewIcePea(Vector2i Mouse_position){
+    int xP = -1;
+    int yP= -1;
+    const int area_X_border = 710;
+    for (int i : Possible_Plant_x){
+        if(Mouse_position.x > i && Mouse_position.x < area_X_border)
+            xP = i;
+    }
+    for (int j : Possible_Plant_Y){
+        if(Mouse_position.y > j)
+            yP = j;
+    }
+    for (auto p : plants){
+        if(p->IsTouchingMouse(Mouse_position))
+            return false;
+    }
+    if (xP != -1 && yP != -1){
+        Vector2f position = {xP , yP};
+        IcePea* new_icepea = new IcePea(position , 500);
+        plants.push_back(new_icepea);
+        money -= 100;
+        return true;
+    }
+    else 
+        return false;
+}
+
+void System::MakeIceShot(Vector2f Plant_position){
+    Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
+    IceShot* new_ice_shot = new IceShot(p_);
+    iceShots.push_back(new_ice_shot);    
 }

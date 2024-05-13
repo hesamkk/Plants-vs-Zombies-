@@ -11,7 +11,12 @@ Zombie::~Zombie(){
 };
 
 void Zombie::Mover(){
-    pos.x -= speed;
+    if(DeltaTime_Freeze <= Time::Zero)
+        pos.x -= speed;
+    else {
+        pos.x -= speed/5;
+        DeltaTime_Freeze -= DeltaTime;
+    }
 }
 
 Sprite Zombie::get_sprite(){
@@ -20,16 +25,13 @@ Sprite Zombie::get_sprite(){
 
 void Zombie::Update(){
     sprite.setPosition(pos);
-    if (pos.x < 0)
-    {
-        // cout << "kk"<<endl;
-    }
+    DeltaTime = Time::Zero;
+    DeltaTime += clock.restart();
 }
 
 void Zombie::NextFrame(){
     
-    DeltaTime_NextFrame += clock.restart();
-    
+    DeltaTime_NextFrame += DeltaTime;
     if(DeltaTime_NextFrame >= frame_changeTime){
     
     rect.left += rect.width;
@@ -78,4 +80,14 @@ void Zombie::Attack(){
 
 void Zombie::Damage(const int& d){
     health -= d;
+}
+
+void Zombie::Freeze(){
+    DeltaTime_Freeze = freeze_time;
+}
+
+bool Zombie::IsCross(){
+    if(pos.x <= 0)
+        return true;
+    return false;
 }

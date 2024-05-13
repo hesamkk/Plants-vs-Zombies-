@@ -52,15 +52,13 @@ private:
 
 class SunFlower : public Plant{
 public:
-    SunFlower(Vector2f given_pos, int h) : Plant(given_pos , h , file_path){
+    SunFlower(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/SunFlower-LowQuality.png" ){
         HEALTH = h;
-    }
-    const string file_path = "";
-    void NextFrame();
+        rectMaker();
+    };
+    void rectMaker();
 private:
-    const int drop_rate = -1;     //default value
-    int HEALTH = -1;       //default value
-    
+    int HEALTH = -1;
 };
 
 
@@ -87,24 +85,28 @@ private:
 
 class IcePea : public Plant{
 public:
-    IcePea(Vector2f given_pos , int h) : Plant(given_pos , h , file_path){
+    IcePea(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/IcePea.png"){
         HEALTH = h;
+        rectMaker();
     };
+    void rectMaker();
+    void NextFrame();
 private:
+    Clock clock;
+    Time frame_changeTime = milliseconds(200);
+    Time DeltaTime_NextFrame = Time::Zero;
     int HEALTH = -1;
-    const string file_path = "";
 };
 
 class Walnut : public Plant{
 public:
-    Walnut(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/Pea-Attack-NBG.png" ){
+    Walnut(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/walnut-LowQuality.png" ){
         HEALTH = h;
         rectMaker();
     };
     void rectMaker();
 private:
     int HEALTH = -1;
-    const string file_path = "";
 };
 
 class Melon : public Plant{

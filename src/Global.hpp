@@ -131,7 +131,6 @@ public:
     }
     ~Shot();
     void Move();
-    void Render();
     Sprite get_sprite(){ return sprite; }
     IntRect get_rect(){ return rect; }
 private:
@@ -146,12 +145,26 @@ class IceShot{
 public:
     IceShot(Vector2f given_pos){
         pos = given_pos;
+        if(!texture.loadFromFile(file_path))
+            abort();
+        rect.left = 0;
+        rect.top = 0;
+        rect.height = 29;
+        rect.width = 29;
+        sprite.setTexture(texture);
+        sprite.setTextureRect(rect);
+        sprite.setPosition(pos);
     }
+    ~IceShot();
     void Move();
-    void Render();
+    Sprite get_sprite(){ return sprite; }
+    IntRect get_rect(){ return rect; }
 private:
-    const string file_path = "";
+    const string file_path = "./src/pics/IcePea-Shot.png";
     Vector2f pos;
+    Sprite sprite;
+    Texture texture;
+    IntRect rect;
 };
 
 class MelonShot{
@@ -166,3 +179,26 @@ private:
     Vector2f pos;
 };
 
+class DeathScreen{
+public:
+    DeathScreen(){
+        if(!texture.loadFromFile(file_path))
+            abort();
+        sprite.setTexture(texture);
+        rect.top = 0 ;
+        rect.left = 0 ;
+        rect.height = 455;
+        rect.width = 548;
+        sprite.setTextureRect(rect);
+        sprite.setScale(0.9 , 0.9);
+        sprite.setPosition(pos);
+        }
+    ~DeathScreen(){}
+    Sprite get_sprite(){ return sprite; }
+private:
+    const string file_path = "./src/pics/DS.png";
+    Sprite sprite;
+    Vector2f pos = {300 , 0};
+    Texture texture;
+    IntRect rect;
+};

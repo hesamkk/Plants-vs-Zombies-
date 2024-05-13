@@ -40,6 +40,7 @@ public:
         sprite.setTexture(texture);
         sprite.setTextureRect(rect);
         sprite.setScale(0.5 , 0.5);
+        clock.restart();
     }
     ~Zombie();
     void Render();
@@ -55,6 +56,8 @@ public:
     bool Is_eating(Vector2f pea_position);
     void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
     void Attack();
+    void Freeze();
+    bool IsCross();
     float get_damage() { return damage; }
     float get_health() { return health; }
     int get_status() { return status; }
@@ -68,7 +71,10 @@ private:
     Vector2f pos;
     Clock clock;
     Time frame_changeTime = milliseconds(200);
+    Time freeze_time = milliseconds(3000);
+    Time DeltaTime = Time::Zero;
     Time DeltaTime_NextFrame = Time::Zero;
+    Time DeltaTime_Freeze = Time::Zero;
     int status = 0;      // 0 is idle 1 is attacking
     int type;
     const string nz_file_path = "./src/pics/ZombieSP.png";
