@@ -295,7 +295,7 @@ void System::Run(){
 }
 
 
-void System:: MakeSun(Vector2f p){
+void System:: MakeSun(const Vector2f & p){
         Sun* new_sun = new Sun(p , &money);
         suns.push_back(new_sun);    
 }
@@ -351,7 +351,7 @@ void System::MakeGiant(const float& speed_, const float& health_, const float& d
     zombies.push_back(new_zombie);
 }
 
-bool System::IsInTheWindow(Vector2i position){
+bool System::IsInTheWindow(const Vector2i& position){
     if ((position.x < 0)||(position.y < 0)||(position.x > Window_lenght)||(position.y > Window_hight))
     {
         return false;
@@ -360,7 +360,7 @@ bool System::IsInTheWindow(Vector2i position){
         return true;
 }
 
-bool System::NewPea(Vector2i Mouse_position){
+bool System::NewPea(const Vector2i& Mouse_position){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -387,7 +387,7 @@ bool System::NewPea(Vector2i Mouse_position){
         return false;
 }
 
-void System::MakeShot(Vector2f Plant_position){
+void System::MakeShot(const Vector2f& Plant_position){
     Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
     Shot* new_shot = new Shot(p_);
     shots.push_back(new_shot);    
@@ -428,7 +428,7 @@ void System::Handler(){
     }
 }
 
-bool System::NewWalnut(Vector2i Mouse_position){
+bool System::NewWalnut(const Vector2i& Mouse_position){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -455,7 +455,7 @@ bool System::NewWalnut(Vector2i Mouse_position){
         return false;
 }
 
-bool System::NewSunFlower(Vector2i Mouse_position){
+bool System::NewSunFlower(const Vector2i& Mouse_position){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -482,7 +482,7 @@ bool System::NewSunFlower(Vector2i Mouse_position){
         return false;
 }
 
-bool System::NewIcePea(Vector2i Mouse_position){
+bool System::NewIcePea(const Vector2i& Mouse_position){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -509,7 +509,7 @@ bool System::NewIcePea(Vector2i Mouse_position){
         return false;
 }
 
-void System::MakeIceShot(Vector2f Plant_position){
+void System::MakeIceShot(const Vector2f& Plant_position){
     Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
     IceShot* new_ice_shot = new IceShot(p_);
     iceShots.push_back(new_ice_shot);    

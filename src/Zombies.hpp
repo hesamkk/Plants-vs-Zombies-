@@ -70,7 +70,7 @@ private:
     IntRect rect;
     Vector2f pos;
     Clock clock;
-    Time frame_changeTime = milliseconds(200);
+    Time frame_changeTime = milliseconds(100);
     Time freeze_time = milliseconds(3000);
     Time DeltaTime = Time::Zero;
     Time DeltaTime_NextFrame = Time::Zero;

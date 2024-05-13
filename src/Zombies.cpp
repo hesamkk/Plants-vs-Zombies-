@@ -11,10 +11,12 @@ Zombie::~Zombie(){
 };
 
 void Zombie::Mover(){
-    if(DeltaTime_Freeze <= Time::Zero)
+    if(DeltaTime_Freeze <= Time::Zero){
         pos.x -= speed;
+        frame_changeTime = milliseconds(100);
+    }
     else {
-        pos.x -= speed/5;
+        pos.x -= speed/3;
         DeltaTime_Freeze -= DeltaTime;
     }
 }
@@ -84,6 +86,7 @@ void Zombie::Damage(const int& d){
 
 void Zombie::Freeze(){
     DeltaTime_Freeze = freeze_time;
+    frame_changeTime = milliseconds(300);
 }
 
 bool Zombie::IsCross(){

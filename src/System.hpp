@@ -25,15 +25,15 @@ public:
     void MakeZombie(const float& s, const float& b, const float& c, const int r);
     void MakeGiant(const float& s , const float& b , const float& c , const int r);
     void Updater();
-    void MakeSun(Vector2f p);
-    bool IsInTheWindow(Vector2i position);
-    bool NewPea(Vector2i m_p);
-    bool NewWalnut(Vector2i m_p);
-    bool NewSunFlower(Vector2i m_p);
-    bool NewIcePea(Vector2i m_p);
-    bool NewMelon(Vector2i m_p);
-    void MakeShot(Vector2f p_p);
-    void MakeIceShot(Vector2f m_p);
+    void MakeSun(const Vector2f& p);
+    bool IsInTheWindow(const Vector2i& position);
+    bool NewPea(const Vector2i& m_p);
+    bool NewWalnut(const Vector2i& m_p);
+    bool NewSunFlower(const Vector2i& m_p);
+    bool NewIcePea(const Vector2i& m_p);
+    bool NewMelon(const Vector2i& m_p);
+    void MakeShot(const Vector2f& p_p);
+    void MakeIceShot(const Vector2f& m_p);
 private:
     vector <Plant*> plants;
     vector <Zombie*> zombies;
