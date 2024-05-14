@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <random>
+#include <fstream>
+#include <string>
 #include "Plants.hpp"
 #include "Zombies.hpp"
 #include "System.hpp"
@@ -18,11 +20,13 @@ const Vector2f PositonOfSunFlowerCard = {10.0 , 190.0};
 const Vector2f PositonOfIcePeaCard = {10.0 , 280.0};
 
 void System::Run(){
+    vector<string> Settings = SettingsReader();
     random_device rd;  
     mt19937 gen(rd());   
     uniform_int_distribution<int> dis(100, 900);
     RenderWindow window(VideoMode(Window_lenght , Window_hight), "PlantsVsZombies");
     DeathScreen death_screen;
+    CrazyDave crazy_bro;
     Pea_Card pea_card (PositonOfPeaCard);
     Walnut_Card wal_card (PositonOfWalNutCard);
     SunFlower_Card sunf_card (PositonOfSunFlowerCard);
@@ -36,15 +40,29 @@ void System::Run(){
         abort();
     }
     bg_sprite.setTexture(bg_texture);
-
+    Font font;
+    if(!font.loadFromFile("./Speedy.ttf"))
+    {
+        cout << "Cannot load font file";
+        abort();
+    }
     Clock clock;
-    const Time interval = milliseconds(2000); 
-    const Time NormalZombieSpawnRate = milliseconds(5000);
-    const Time GiantSpawnRate = milliseconds(7000);
-    const Time ShotRate = milliseconds(1000);
-    const Time ZombieHitRate = milliseconds(500);
-    const Time SunSpawnRate = milliseconds(3000);
-    const Time IceShotRate = milliseconds(1000);
+    Text DaveText;
+    Text MoneyText;
+    const float NormalZombieSpeed = stof(Settings[8]);
+    const float NormalZombieHealth = stof(Settings[9]);
+    const float NormalZombieDamage = stof(Settings[10]);
+    const float GiantSpeed = stof(Settings[11]);
+    const float GiantHealth = stof(Settings[12]);
+    const float GiantDamage = stof(Settings[13]);
+    const Time SunfallingRate = milliseconds(stoi(Settings[0])); 
+    const Time NormalZombieSpawnRate = milliseconds(stoi(Settings[2]));
+    const Time GiantSpawnRate = milliseconds(stoi(Settings[3]));
+    const Time ShotRate = milliseconds(stoi(Settings[4]));
+    const Time ZombieHitRate = milliseconds(stoi(Settings[7]));
+    const Time SunSpawnRate = milliseconds(stoi(Settings[6]));
+    const Time IceShotRate = milliseconds(stoi(Settings[5]));
+    const Time win_time = milliseconds(stoi(Settings[1]));
     Time DeltaTime_SunDrop = Time::Zero;
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
@@ -54,6 +72,7 @@ void System::Run(){
     Time DeltaTime_ZombieHit = Time::Zero;
     Time DeltaTime_SunSpawn = Time::Zero;
     Time DeltaTime_IceShot = Time::Zero;
+    Time DeltaTime_win = Time::Zero;
     Time DeltaTime= Time::Zero;
     bool mouseDown = false;
     bool taged_pea_card = false;
@@ -61,6 +80,17 @@ void System::Run(){
     bool taged_sunf_card =false;
     bool taged_ipe_card = false;
     bool flag = false;
+    DaveText.setFont(font);
+    MoneyText.setFont(font);
+    DaveText.setString("You won my brother... Grrrr!");
+    DaveText.setCharacterSize(24);
+    DaveText.setFillColor(sf::Color::White);
+    DaveText.setPosition(230, 150);
+    MoneyText.setString("0");
+    MoneyText.setCharacterSize(20);
+    MoneyText.setFillColor(sf::Color::Black);
+    MoneyText.setStyle(Text::Bold);
+    MoneyText.setPosition(945, 70);
     while(window.isOpen()){
         window.clear();
         Event event;
@@ -80,6 +110,22 @@ void System::Run(){
                     }
                     window.display();
                 }
+            }
+        }
+        if(DeltaTime_win >= win_time){
+            Event event_;
+            while(true){
+                window.clear();
+                window.draw(bg_sprite);
+                window.draw(crazy_bro.get_sprite());
+                window.draw(DaveText);
+                while(window.pollEvent(event_)){
+                if(event_.type == Event::Closed){
+                    window.close();
+                    return;
+                }                       
+                }
+                window.display();
             }
         }
         while(window.pollEvent(event)){
@@ -116,7 +162,7 @@ void System::Run(){
                     if(NewSunFlower(Mouse_position))
                         sunf_card.Used();
                 }
-                else if(taged_ipe_card && money >= 100 && ipe_card.get_avalablity()){
+                else if(taged_ipe_card && money >= 175 && ipe_card.get_avalablity()){
                     if(NewIcePea(Mouse_position))
                         ipe_card.Used();
                 }
@@ -156,28 +202,30 @@ void System::Run(){
         DeltaTime_ZombieHit += DeltaTime;
         DeltaTime_SunSpawn += DeltaTime;
         DeltaTime_IceShot += DeltaTime;
+        DeltaTime_win += DeltaTime;
         random_number = dis(gen);
-        if (DeltaTime_SunDrop >= interval)
+        if (DeltaTime_SunDrop >= SunfallingRate)
         {
             Vector2f random_pos = {random_number , -100};
             MakeSun(random_pos);
-            DeltaTime_SunDrop -= interval;
+            DeltaTime_SunDrop -= SunfallingRate;
         }
         if (DeltaTime_ZombieSpawn >= NormalZombieSpawnRate){
-            MakeZombie(0.05, 60 , 10 , random_number);    //Needs to be changed...
+            MakeZombie(NormalZombieSpeed, NormalZombieHealth , NormalZombieDamage , random_number);    //Needs to be changed...
             DeltaTime_ZombieSpawn -= NormalZombieSpawnRate;
         }
         if (DeltaTime_GiantSpawn >= GiantSpawnRate){
-            MakeGiant(0.15 , 100 , 20 , random_number);   //Needs to be changed... acording to csv file;
+            MakeGiant(GiantSpeed , GiantHealth , GiantDamage , random_number);   //Needs to be changed... acording to csv file;
             DeltaTime_GiantSpawn -= GiantSpawnRate;
         }
 
-        
+        MoneyText.setString(to_string(money));
         pea_card.Update();
         wal_card.Update();
         sunf_card.Update();
         ipe_card.Update();
         window.draw(bg_sprite);
+        window.draw(MoneyText);
         window.draw(pea_card.get_sprite());
         window.draw(wal_card.get_sprite());
         window.draw(sunf_card.get_sprite());
@@ -513,4 +561,19 @@ void System::MakeIceShot(const Vector2f& Plant_position){
     Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
     IceShot* new_ice_shot = new IceShot(p_);
     iceShots.push_back(new_ice_shot);    
+}
+
+vector<string> System::SettingsReader(){
+    ifstream settingsFile;
+    settingsFile.open("./settings.txt", ios::in);
+    vector<string> Settings;
+    int currentLine = 1;
+    string line;
+    while (getline(settingsFile, line)) {
+        if (currentLine % 2 == 0) {
+            Settings.push_back(line);
+        }
+        currentLine++;
+    }
+    return Settings;
 }

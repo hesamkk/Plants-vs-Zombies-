@@ -202,3 +202,26 @@ private:
     Texture texture;
     IntRect rect;
 };
+
+class CrazyDave{
+public:
+    CrazyDave(){
+        if(!texture.loadFromFile(file_path))
+            abort();
+        sprite.setTexture(texture);
+        rect.top = 0 ;
+        rect.left = 0 ;
+        rect.height = 400;
+        rect.width = 248;
+        sprite.setTextureRect(rect);
+        sprite.setPosition(pos);
+        }
+    ~CrazyDave(){}
+    Sprite get_sprite(){ return sprite; }
+private:
+    const string file_path = "./src/pics/CrazyDave.png";
+    Sprite sprite;
+    Vector2f pos = {10 , 50};
+    Texture texture;
+    IntRect rect;
+};

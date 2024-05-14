@@ -34,6 +34,7 @@ public:
     bool NewMelon(const Vector2i& m_p);
     void MakeShot(const Vector2f& p_p);
     void MakeIceShot(const Vector2f& m_p);
+    vector<string> SettingsReader();
 private:
     vector <Plant*> plants;
     vector <Zombie*> zombies;
