@@ -111,12 +111,18 @@ private:
 
 class Melon : public Plant{
 public:
-    Melon(Vector2f given_pos , int h) : Plant(given_pos , h , file_path){
+    Melon(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/Melon-attack-NBG"){
         HEALTH = h;
+        rectMaker();
     };
+    void rectMaker();
+    void NextFrame();
 private:
-    int HEALTH = -1;
     const string file_path = "";
+    Clock clock;
+    Time frame_changeTime = milliseconds(200);
+    Time DeltaTime_NextFrame = Time::Zero;
+    int HEALTH = -1;
 };
 
 

@@ -39,6 +39,13 @@ void IcePea::rectMaker(){
     sprite.setTextureRect(rect);   
 }
 
+void Melon::rectMaker(){
+    rect.left = 3;
+    rect.top = 0;
+    rect.height = 33;
+    rect.width = 31;
+}
+
 bool Plant::IsThereZombie(const vector<Zombie*> zombies){
     for(auto z: zombies){
         if(z->get_x() >= pos.x && (z->get_y()+50 == pos.y || z->get_y() + 60 == pos.y))
@@ -93,6 +100,10 @@ void IcePea::NextFrame(){
     sprite.setTextureRect(rect);
     DeltaTime_NextFrame = Time::Zero;
     }
+}
+
+void Melon::NextFrame(){
+    
 }
 
 
