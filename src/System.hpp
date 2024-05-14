@@ -27,11 +27,11 @@ public:
     void Updater();
     void MakeSun(const Vector2f& p);
     bool IsInTheWindow(const Vector2i& position);
-    bool NewPea(const Vector2i& m_p);
-    bool NewWalnut(const Vector2i& m_p);
-    bool NewSunFlower(const Vector2i& m_p);
-    bool NewIcePea(const Vector2i& m_p);
-    bool NewMelon(const Vector2i& m_p);
+    bool NewPea(const Vector2i& m_p, const int health);
+    bool NewWalnut(const Vector2i& m_p, const int health);
+    bool NewSunFlower(const Vector2i& m_p, const int health);
+    bool NewIcePea(const Vector2i& m_p, const int health);
+    bool NewMelon(const Vector2i& m_p, const int health);
     void MakeShot(const Vector2f& p_p);
     void MakeIceShot(const Vector2f& m_p);
     vector<string> SettingsReader();

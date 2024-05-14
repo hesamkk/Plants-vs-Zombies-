@@ -26,3 +26,11 @@ Giant-Health(float):
 100.0
 Giant-Damage(float):
 20.0
+SunFlowerHealth(int):
+100
+WalnutHealth(int):
+1000
+PeaHealth(int):
+100
+IcePeaHealth(int):
+100

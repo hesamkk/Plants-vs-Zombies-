@@ -9,6 +9,7 @@
 #include "System.hpp"
 #include "Global.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 using namespace std;
 using namespace sf;
@@ -21,6 +22,9 @@ const Vector2f PositonOfIcePeaCard = {10.0 , 280.0};
 
 void System::Run(){
     vector<string> Settings = SettingsReader();
+    sf::Music music;
+    sf::Music victory_theme;
+    sf::Music defeat_theme;
     random_device rd;  
     mt19937 gen(rd());   
     uniform_int_distribution<int> dis(100, 900);
@@ -46,6 +50,19 @@ void System::Run(){
         cout << "Cannot load font file";
         abort();
     }
+    if(!music.openFromFile("./src/musics/music.flac")){
+        cout << "Cannot load music";
+        abort();
+    }
+    if(!victory_theme.openFromFile("./src/musics/Victory.flac")){
+        cout << "Cannot load music";
+        abort();
+    }
+    if(!defeat_theme.openFromFile("./src/musics/Defeat.flac")){
+        cout << "Cannot load music";
+        abort();
+    }
+    music.setLoop(true);
     Clock clock;
     Text DaveText;
     Text MoneyText;
@@ -55,6 +72,10 @@ void System::Run(){
     const float GiantSpeed = stof(Settings[11]);
     const float GiantHealth = stof(Settings[12]);
     const float GiantDamage = stof(Settings[13]);
+    const int SunFlowerHealth = stoi(Settings[14]);
+    const int WalnutHealth = stoi(Settings[15]);
+    const int PeaHealth = stoi(Settings[16]);
+    const int IcePeaHealth = stoi(Settings[17]);
     const Time SunfallingRate = milliseconds(stoi(Settings[0])); 
     const Time NormalZombieSpawnRate = milliseconds(stoi(Settings[2]));
     const Time GiantSpawnRate = milliseconds(stoi(Settings[3]));
@@ -91,12 +112,15 @@ void System::Run(){
     MoneyText.setFillColor(sf::Color::Black);
     MoneyText.setStyle(Text::Bold);
     MoneyText.setPosition(945, 70);
+    music.play();
     while(window.isOpen()){
         window.clear();
         Event event;
         Vector2i Mouse_position = Mouse::getPosition(window);
         for(auto z : zombies){
             if(z->IsCross()){
+                music.stop();
+                defeat_theme.play();
                 Event event_;
                 while(true){
                     window.clear();
@@ -114,6 +138,8 @@ void System::Run(){
         }
         if(DeltaTime_win >= win_time){
             Event event_;
+            music.stop();
+            victory_theme.play();
             while(true){
                 window.clear();
                 window.draw(bg_sprite);
@@ -151,19 +177,19 @@ void System::Run(){
             else if (event.type == Event::MouseButtonReleased){
                 mouseDown = false;
                 if(taged_pea_card && money >= 100 && pea_card.get_avalablity()){
-                    if(NewPea(Mouse_position))
+                    if(NewPea(Mouse_position, PeaHealth))
                         pea_card.Used();
                 }
                 else if(taged_wal_card && money >= 50 && wal_card.get_avalablity()){
-                    if(NewWalnut(Mouse_position))
+                    if(NewWalnut(Mouse_position, WalnutHealth))
                         wal_card.Used();
                 }
                 else if(taged_sunf_card && money >= 50 && sunf_card.get_avalablity()){
-                    if(NewSunFlower(Mouse_position))
+                    if(NewSunFlower(Mouse_position, SunFlowerHealth))
                         sunf_card.Used();
                 }
                 else if(taged_ipe_card && money >= 175 && ipe_card.get_avalablity()){
-                    if(NewIcePea(Mouse_position))
+                    if(NewIcePea(Mouse_position, IcePeaHealth))
                         ipe_card.Used();
                 }
                 if(taged_pea_card){                
@@ -408,7 +434,7 @@ bool System::IsInTheWindow(const Vector2i& position){
         return true;
 }
 
-bool System::NewPea(const Vector2i& Mouse_position){
+bool System::NewPea(const Vector2i& Mouse_position, const int health){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -476,7 +502,7 @@ void System::Handler(){
     }
 }
 
-bool System::NewWalnut(const Vector2i& Mouse_position){
+bool System::NewWalnut(const Vector2i& Mouse_position, const int health){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -503,7 +529,7 @@ bool System::NewWalnut(const Vector2i& Mouse_position){
         return false;
 }
 
-bool System::NewSunFlower(const Vector2i& Mouse_position){
+bool System::NewSunFlower(const Vector2i& Mouse_position, const int health){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
@@ -530,7 +556,7 @@ bool System::NewSunFlower(const Vector2i& Mouse_position){
         return false;
 }
 
-bool System::NewIcePea(const Vector2i& Mouse_position){
+bool System::NewIcePea(const Vector2i& Mouse_position, const int health){
     int xP = -1;
     int yP= -1;
     const int area_X_border = 710;
