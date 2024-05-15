@@ -8,12 +8,14 @@
 using namespace std;
 using namespace sf;
 
-class Plant{
+class Plant
+{
 public:
-    Plant(Vector2f given_pos, int h, const string texture_adr){
+    Plant(Vector2f given_pos, int h, const string texture_adr)
+    {
         pos = given_pos;
         health = h;
-        if(!texture.loadFromFile(texture_adr))
+        if (!texture.loadFromFile(texture_adr))
         {
             abort();
         }
@@ -25,51 +27,56 @@ public:
     ~Plant();
     void Render();
     void Updater();
-    bool IsThereZombie(const vector<Zombie*> zombies);
+    bool IsThereZombie(const vector<Zombie *> zombies);
     bool IsTouchingMouse(Vector2i m_p);
-    void revealing_the_bounds(){Sprite_Bounds = sprite.getGlobalBounds();};
-    void status_setter(int given_status ){ status = given_status; }
-    int get_status(){ return status; }
+    void revealing_the_bounds() { Sprite_Bounds = sprite.getGlobalBounds(); };
+    void status_setter(int given_status) { status = given_status; }
+    int get_status() { return status; }
     float get_health() { return health; }
     void Damage(float dam) { health -= dam; }
-    virtual void NextFrame(){ };
-    void ChangeTheAnimation(string new_file_path){
+    virtual void NextFrame() {};
+    void ChangeTheAnimation(string new_file_path)
+    {
         cout << "Texture changed to: " << new_file_path << endl;
-        if(!texture.loadFromFile(new_file_path))
+        if (!texture.loadFromFile(new_file_path))
             abort();
     };
     IntRect rect;
     Sprite sprite;
+
 private:
     Texture texture;
     FloatRect Sprite_Bounds;
     Vector2f pos;
     int health;
-    int status = 0; //0 for Normal  -   1 for Attack
+    int status = 0;
 };
 
-
-class SunFlower : public Plant{
+class SunFlower : public Plant
+{
 public:
-    SunFlower(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/SunFlower-LowQuality.png" ){
+    SunFlower(Vector2f given_pos, int h) : Plant(given_pos, h, "./src/pics/SunFlower-LowQuality.png")
+    {
         HEALTH = h;
         rectMaker();
     };
     void rectMaker();
+
 private:
     int HEALTH = -1;
 };
 
-
-class Pea : public Plant{
+class Pea : public Plant
+{
 public:
-    Pea(Vector2f given_pos , int h, int s, string file_path = "./src/pics/Pea-Attack-NBG.png" ) : Plant(given_pos , h , file_path){
+    Pea(Vector2f given_pos, int h, int s, string file_path = "./src/pics/Pea-Attack-NBG.png") : Plant(given_pos, h, file_path)
+    {
         HEALTH = h;
         SHOT_RATE = s;
         rectMaker();
-        this -> file_path = file_path;
+        this->file_path = file_path;
     };
-    
+
     void rectMaker();
     void NextFrame();
 
@@ -82,14 +89,17 @@ private:
     string file_path;
 };
 
-class IcePea : public Plant{
+class IcePea : public Plant
+{
 public:
-    IcePea(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/IcePea.png"){
+    IcePea(Vector2f given_pos, int h) : Plant(given_pos, h, "./src/pics/IcePea.png")
+    {
         HEALTH = h;
         rectMaker();
     };
     void rectMaker();
     void NextFrame();
+
 private:
     Clock clock;
     Time frame_changeTime = milliseconds(200);
@@ -97,25 +107,31 @@ private:
     int HEALTH = -1;
 };
 
-class Walnut : public Plant{
+class Walnut : public Plant
+{
 public:
-    Walnut(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/walnut-LowQuality.png" ){
+    Walnut(Vector2f given_pos, int h) : Plant(given_pos, h, "./src/pics/walnut-LowQuality.png")
+    {
         HEALTH = h;
         rectMaker();
     };
     void rectMaker();
+
 private:
     int HEALTH = -1;
 };
 
-class Melon : public Plant{
+class Melon : public Plant
+{
 public:
-    Melon(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/Melon-attack-NBG.png"){
+    Melon(Vector2f given_pos, int h) : Plant(given_pos, h, "./src/pics/Melon-attack-NBG.png")
+    {
         HEALTH = h;
         rectMaker();
     };
     void rectMaker();
     void NextFrame();
+
 private:
     const string file_path = "";
     Clock clock;
@@ -123,5 +139,3 @@ private:
     Time DeltaTime_NextFrame = Time::Zero;
     int HEALTH = -1;
 };
-
-

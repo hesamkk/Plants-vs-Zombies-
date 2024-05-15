@@ -1,7 +1,7 @@
 SunDropRate(millisecondes):
 5000
 TimeToWin(millisecondes):
-60000
+120000
 NormalZombieSpawnRate(millisecondes):
 7000
 GiantSpawnRate(millisecondes):
@@ -35,4 +35,4 @@ PeaHealth(int):
 IcePeaHealth(int):
 100
 melonshotrate(int)
-2000
+1200
