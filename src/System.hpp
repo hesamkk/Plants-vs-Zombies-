@@ -36,6 +36,7 @@ public:
     void MakeIceShot(const Vector2f& m_p);
     void MakeMelonShot(const Vector2f& m_p , int l);
     vector<string> SettingsReader();
+    Zombie* front(int y);
 private:
     vector <Plant*> plants;
     vector <Zombie*> zombies;

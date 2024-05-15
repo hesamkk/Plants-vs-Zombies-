@@ -201,7 +201,7 @@ void System::Run(){
                     if(NewIcePea(Mouse_position, IcePeaHealth))
                         ipe_card.Used();
                 }
-                else if(taged_mel_card && money >= 25 && mel_card.get_avalablity()){
+                else if(taged_mel_card && money >= 100 && mel_card.get_avalablity()){
                     if(NewMelon(Mouse_position, IcePeaHealth))
                         mel_card.Used();
                 }
@@ -436,6 +436,7 @@ void System::Updater(){                     ///We can find a way to not always c
     vector<Shot*> trashot;
     vector<Plant*> trashp;
     vector<Zombie*> trashz;
+    vector<MelonShot*> trashm;
     for(auto s : suns){
         if((s->get_sprite().getPosition().y >= Window_hight) || (s->get_sprite().getPosition().y <= -120) )
             trashs.push_back(s);
@@ -467,6 +468,14 @@ void System::Updater(){                     ///We can find a way to not always c
     for(auto z_ : trashz){
         zombies.erase(remove(zombies.begin() , zombies.end() , z_),zombies.end());
         delete z_;
+    }
+    for(auto ms: melonshots){
+        if((ms->get_sprite().getPosition().y >= Window_hight) || (ms->get_sprite().getPosition().y <= -120) || (ms->get_sprite().getPosition().x >= Window_lenght))
+            trashm.push_back(ms);
+    }
+    for(auto ms_ : trashm){
+        melonshots.erase(remove(melonshots.begin() , melonshots.end() , ms_),melonshots.end());
+        delete ms_;        
     }
 }
 
@@ -527,6 +536,7 @@ void System::MakeShot(const Vector2f& Plant_position){
 void System::Handler(){
     vector<Shot*> trashot;
     vector<IceShot*> trashi;
+    vector<MelonShot*> trashm;
     for(auto s : shots){
         for(auto z: zombies){
             if(z -> Is_Shot(Vector2i(s -> get_sprite().getPosition())))
@@ -548,6 +558,17 @@ void System::Handler(){
             }            
         }
     }
+    for (auto s: melonshots){
+        for(auto z: zombies){
+            if(z -> Is_Shot(Vector2i(s -> get_sprite().getPosition())) && z->get_y() == s->get_lineY())
+            {
+                z->Damage(40);
+                z->Freeze();
+                trashm.push_back(s);
+                break;
+            }            
+        }
+    }
 
     for (auto s_ : trashot){
         shots.erase(remove(shots.begin() , shots.end() , s_),shots.end());
@@ -555,6 +576,10 @@ void System::Handler(){
     }
     for (auto s_ : trashi){
         iceShots.erase(remove(iceShots.begin() , iceShots.end() , s_),iceShots.end());
+        delete s_;
+    }
+    for (auto s_ : trashm){
+        melonshots.erase(remove(melonshots.begin() , melonshots.end() , s_),melonshots.end());
         delete s_;
     }
 }
@@ -660,7 +685,7 @@ bool System::NewMelon(const Vector2i& Mouse_position, const int health){
         Vector2f position = {xP , yP};
         Melon* new_melon = new Melon(position , 500);
         plants.push_back(new_melon);
-        money -= 25;
+        money -= 100;
         return true;
     }
     else 
@@ -668,9 +693,16 @@ bool System::NewMelon(const Vector2i& Mouse_position, const int health){
 }
 
 
-void System::MakeMelonShot(const Vector2f& Plant_position,int l_num){//?
+void System::MakeMelonShot(const Vector2f& Plant_position,int l_num){
+    Zombie* target = front(l_num);
+    int target_x;
+    if(target == NULL)
+        return;
+    else{
+        target_x = target->get_x();
+    }
     Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
-    MelonShot* new_melon_shot = new MelonShot(p_,l_num);
+    MelonShot* new_melon_shot = new MelonShot(p_,l_num, target_x);
     melonshots.push_back(new_melon_shot);    
 }
 
@@ -693,4 +725,21 @@ vector<string> System::SettingsReader(){
         currentLine++;
     }
     return Settings;
+}
+
+Zombie* System::front(int y){
+    Zombie* result = zombies[0];
+    int count   =0;
+    for(auto z: zombies){
+        if(z->get_y() == y){
+            if(result->get_x()<= z->get_x())
+            {
+                count++;
+                result = z;
+            }
+        }
+    }
+    if(count == 0)
+        return NULL;
+    return result;
 }

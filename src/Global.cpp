@@ -39,7 +39,6 @@ bool Sun::isClicked(Vector2i Mouse_position){
     if (Sprite_Bounds.contains(static_cast<sf::Vector2f>(Mouse_position)))
     {
         (*money) = (*money) + 25;
-        cout << *money << endl;
         dSpeed = -(2.5);
         return true;
         
@@ -118,6 +117,8 @@ void IceShot::Move(){
     sprite.setPosition(pos);
 }
 void MelonShot::Move(){
-    pos.x += 1;
+    pos.x += target/200.0;
+    pos.y += y_speed;
+    y_speed += acceleration;
     sprite.setPosition(pos);
 }

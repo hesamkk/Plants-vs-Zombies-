@@ -21,7 +21,6 @@ public:
         sprite.setTextureRect(rect);
         sprite.setScale(1.7, 1.7);
         sprite.setPosition(pos);
-        cout << "MADE yohooo!" << endl;
     }
     ~Plant();
     void Render();

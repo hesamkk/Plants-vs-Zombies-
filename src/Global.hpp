@@ -172,7 +172,7 @@ private:
 
 class MelonShot{
 public:
-    MelonShot(Vector2f given_pos , int l){
+    MelonShot(Vector2f given_pos , int l, int x){
         pos = given_pos;
         if(!texture.loadFromFile(file_path))
             abort();
@@ -184,6 +184,7 @@ public:
         sprite.setTextureRect(rect);
         sprite.setPosition(pos);
         line_Y = l;
+        target = x-pos.x;
     }
     ~MelonShot();
     void Move();
@@ -191,6 +192,7 @@ public:
     // void Render();
     Sprite get_sprite(){ return sprite; }
     IntRect get_rect(){ return rect; }
+    int get_lineY() { return line_Y; }
 private:
     const string file_path = "./src/pics/melon_shot-removebg-preview.png";
     Vector2f pos;
@@ -198,7 +200,9 @@ private:
     Texture texture;
     IntRect rect;
     int line_Y ;
-    
+    float target;
+    const float acceleration = 0.0025;
+    float y_speed = -0.5;
 };
 
 class DeathScreen{

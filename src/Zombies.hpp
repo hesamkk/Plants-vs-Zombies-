@@ -42,6 +42,7 @@ public:
         sprite.setScale(0.5 , 0.5);
         clock.restart();
     }
+    Zombie(){};
     ~Zombie();
     void Render();
     void Update();
