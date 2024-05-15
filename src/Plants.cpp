@@ -42,8 +42,10 @@ void IcePea::rectMaker(){
 void Melon::rectMaker(){
     rect.left = 3;
     rect.top = 0;
-    rect.height = 33;
-    rect.width = 31;
+    rect.height = 85;
+    rect.width = 84.75;
+    sprite.setTextureRect(rect);
+    sprite.setScale(0.6,0.6);
 }
 
 bool Plant::IsThereZombie(const vector<Zombie*> zombies){
@@ -103,6 +105,14 @@ void IcePea::NextFrame(){
 }
 
 void Melon::NextFrame(){
+    DeltaTime_NextFrame += clock.restart();
+    if(DeltaTime_NextFrame >= frame_changeTime){
+    rect.left += rect.width; // needs a magic valeu or something
+    if (rect.left >= 670)
+        rect.left =0;
+    sprite.setTextureRect(rect);
+    DeltaTime_NextFrame = Time::Zero;
+    }
     
 }
 

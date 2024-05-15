@@ -111,7 +111,7 @@ private:
 
 class Melon : public Plant{
 public:
-    Melon(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/Melon-attack-NBG"){
+    Melon(Vector2f given_pos , int h) : Plant(given_pos , h , "./src/pics/Melon-attack-NBG.png"){
         HEALTH = h;
         rectMaker();
     };

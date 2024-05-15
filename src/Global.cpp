@@ -10,7 +10,12 @@ const int Window_hight = 425;
 const int Window_lenght = 1000;
 
 void Sun::MoveUpDown(){
+    if(!falling && falling_count >= 20 && dSpeed >= 0){
+        return;
+    }
     pos.y += dSpeed;
+    falling_count ++;
+    
 }
 
 void Sun::Update(){
@@ -23,6 +28,8 @@ Sun::~Sun(){
 Shot::~Shot(){
 }
 IceShot::~IceShot(){    
+}
+MelonShot::~MelonShot(){
 }
 
 bool Sun::isClicked(Vector2i Mouse_position){
@@ -89,6 +96,10 @@ void IcePea_Card::RePosition(){
     pos.x = 10;
     pos.y = 280;
 }
+void Melon_Card::RePosition(){
+    pos.x = 75;
+    pos.y = 10;
+}
 
 void Card::Used(){
     DeltaTime_NextFrame = Time::Zero;
@@ -103,6 +114,10 @@ void Shot::Move(){
 }
 
 void IceShot::Move(){
+    pos.x += 1;
+    sprite.setPosition(pos);
+}
+void MelonShot::Move(){
     pos.x += 1;
     sprite.setPosition(pos);
 }

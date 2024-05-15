@@ -25,7 +25,7 @@ public:
     void MakeZombie(const float& s, const float& b, const float& c, const int r);
     void MakeGiant(const float& s , const float& b , const float& c , const int r);
     void Updater();
-    void MakeSun(const Vector2f& p);
+    void MakeSun(const Vector2f& p,bool IsFalling);
     bool IsInTheWindow(const Vector2i& position);
     bool NewPea(const Vector2i& m_p, const int health);
     bool NewWalnut(const Vector2i& m_p, const int health);
@@ -34,6 +34,7 @@ public:
     bool NewMelon(const Vector2i& m_p, const int health);
     void MakeShot(const Vector2f& p_p);
     void MakeIceShot(const Vector2f& m_p);
+    void MakeMelonShot(const Vector2f& m_p , int l);
     vector<string> SettingsReader();
 private:
     vector <Plant*> plants;
@@ -41,6 +42,7 @@ private:
     vector <Sun*> suns;
     vector <Shot*> shots;
     vector <IceShot*> iceShots;
+    vector <MelonShot*> melonshots;
     int field_width;
     int field_hight;
     int money = 0;

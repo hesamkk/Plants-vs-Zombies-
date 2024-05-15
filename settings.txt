@@ -34,3 +34,5 @@ PeaHealth(int):
 100
 IcePeaHealth(int):
 100
+melonshotrate(int)
+2000

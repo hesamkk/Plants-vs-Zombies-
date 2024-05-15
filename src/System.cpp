@@ -19,6 +19,7 @@ const Vector2f PositonOfPeaCard = {10.0 , 10.0};
 const Vector2f PositonOfWalNutCard = {10.0 , 100.0};
 const Vector2f PositonOfSunFlowerCard = {10.0 , 190.0};
 const Vector2f PositonOfIcePeaCard = {10.0 , 280.0};
+const Vector2f PositonOfMelonCard = {75.0 , 10.0};
 
 void System::Run(){
     vector<string> Settings = SettingsReader();
@@ -35,6 +36,7 @@ void System::Run(){
     Walnut_Card wal_card (PositonOfWalNutCard);
     SunFlower_Card sunf_card (PositonOfSunFlowerCard);
     IcePea_Card ipe_card (PositonOfIcePeaCard);
+    Melon_Card mel_card (PositonOfMelonCard);
     Texture bg_texture;
     Sprite bg_sprite;
     int random_number;
@@ -84,6 +86,8 @@ void System::Run(){
     const Time SunSpawnRate = milliseconds(stoi(Settings[6]));
     const Time IceShotRate = milliseconds(stoi(Settings[5]));
     const Time win_time = milliseconds(stoi(Settings[1]));
+    const Time MelonShotRate = milliseconds(stoi(Settings[18]));
+    //what about melon grrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
     Time DeltaTime_SunDrop = Time::Zero;
     Time DeltaTime_ZombieSpawn = Time::Zero;
     Time DeltaTime_GiantSpawn = Time::Zero;
@@ -93,6 +97,8 @@ void System::Run(){
     Time DeltaTime_ZombieHit = Time::Zero;
     Time DeltaTime_SunSpawn = Time::Zero;
     Time DeltaTime_IceShot = Time::Zero;
+    Time DeltaTime_MelonShot = Time::Zero;
+    Time DeltaTime_MelonShot_Saver = Time::Zero;
     Time DeltaTime_win = Time::Zero;
     Time DeltaTime= Time::Zero;
     bool mouseDown = false;
@@ -100,6 +106,7 @@ void System::Run(){
     bool taged_wal_card = false;
     bool taged_sunf_card =false;
     bool taged_ipe_card = false;
+    bool taged_mel_card = false;
     bool flag = false;
     DaveText.setFont(font);
     MoneyText.setFont(font);
@@ -168,7 +175,9 @@ void System::Run(){
                 else if(sunf_card.is_tagged(Mouse_position))
                     taged_sunf_card = true;
                 else if(ipe_card.is_tagged(Mouse_position))
-                    taged_ipe_card = true;                
+                    taged_ipe_card = true;
+                else if(mel_card.is_tagged(Mouse_position))
+                    taged_mel_card = true;                
                 for (auto s : suns)
                 {
                     s->isClicked(Mouse_position);
@@ -192,6 +201,10 @@ void System::Run(){
                     if(NewIcePea(Mouse_position, IcePeaHealth))
                         ipe_card.Used();
                 }
+                else if(taged_mel_card && money >= 25 && mel_card.get_avalablity()){
+                    if(NewMelon(Mouse_position, IcePeaHealth))
+                        mel_card.Used();
+                }
                 if(taged_pea_card){                
                     taged_pea_card = false;
                     pea_card.RePosition();
@@ -208,6 +221,11 @@ void System::Run(){
                     taged_ipe_card = false;
                     ipe_card.RePosition();
                 }
+                else if(taged_mel_card){
+                    taged_mel_card = false;
+                    mel_card.RePosition();
+                }
+
 
             }
                 
@@ -220,6 +238,9 @@ void System::Run(){
             sunf_card.Drag(Mouse_position);
         else if(mouseDown && taged_ipe_card)
             ipe_card.Drag(Mouse_position);
+        else if(mouseDown && taged_mel_card)
+            mel_card.Drag(Mouse_position);
+
         DeltaTime = clock.restart();
         DeltaTime_SunDrop += DeltaTime;
         DeltaTime_ZombieSpawn += DeltaTime;
@@ -228,12 +249,13 @@ void System::Run(){
         DeltaTime_ZombieHit += DeltaTime;
         DeltaTime_SunSpawn += DeltaTime;
         DeltaTime_IceShot += DeltaTime;
+        DeltaTime_MelonShot += DeltaTime;
         DeltaTime_win += DeltaTime;
         random_number = dis(gen);
         if (DeltaTime_SunDrop >= SunfallingRate)
         {
             Vector2f random_pos = {random_number , -100};
-            MakeSun(random_pos);
+            MakeSun(random_pos ,true);
             DeltaTime_SunDrop -= SunfallingRate;
         }
         if (DeltaTime_ZombieSpawn >= NormalZombieSpawnRate){
@@ -250,15 +272,19 @@ void System::Run(){
         wal_card.Update();
         sunf_card.Update();
         ipe_card.Update();
+        mel_card.Update();
         window.draw(bg_sprite);
         window.draw(MoneyText);
         window.draw(pea_card.get_sprite());
         window.draw(wal_card.get_sprite());
         window.draw(sunf_card.get_sprite());
         window.draw(ipe_card.get_sprite());
+        window.draw(mel_card.get_sprite());
         vector<Plant*> attackingPlants;
         vector<Plant*> generatingPlants;
         vector<Plant*> attackingIcyPlants;
+        vector<Plant*> attackingMelonPlants;
+
 
         for (auto p : plants){
             if(Pea* pea = dynamic_cast<Pea*>(p))
@@ -286,6 +312,21 @@ void System::Run(){
                 // p -> ChangeTheAnimation("./src/pics/Pea-NBG.png");               
             }
         }
+        for (auto p : plants)
+        {
+            if(Melon* pea = dynamic_cast<Melon*>(p))
+            if(p->IsThereZombie(zombies))
+            {
+                p->status_setter(1);
+                // p -> ChangeTheAnimation("");
+                attackingMelonPlants.push_back(p);
+            }
+            else{               
+                p->status_setter(0);                
+                // p -> ChangeTheAnimation("");               
+            }
+        }
+        
 
         for (auto p : plants){
             if(SunFlower* sun = dynamic_cast<SunFlower*>(p))
@@ -311,13 +352,22 @@ void System::Run(){
                 DeltaTime_IceShot = Time::Zero;
             }
         }
+        
+        DeltaTime_MelonShot_Saver = DeltaTime_MelonShot;
+        for (auto p : attackingMelonPlants){
+            DeltaTime_MelonShot = DeltaTime_MelonShot_Saver;
+            if(DeltaTime_MelonShot >= MelonShotRate){
+                MakeMelonShot(p->sprite.getPosition(),(p->sprite.getPosition().y-50));
+                DeltaTime_MelonShot = Time::Zero;
+            }
+        }
 
         flag = 0;
         for (auto p : generatingPlants){
             if(DeltaTime_SunSpawn >= SunSpawnRate)
             {
                 flag = true;
-                MakeSun(p->sprite.getPosition());
+                MakeSun(p->sprite.getPosition(),false);
             }
         }
         if(flag)
@@ -354,6 +404,12 @@ void System::Run(){
             is->Move();
             window.draw(is->get_sprite());
         }
+        for(auto ms: melonshots){
+            ms->Move();
+            window.draw(ms->get_sprite());
+        }
+
+        
         for (auto s : suns){
             s->MoveUpDown();
             s->Update();
@@ -369,12 +425,13 @@ void System::Run(){
 }
 
 
-void System:: MakeSun(const Vector2f & p){
+void System:: MakeSun(const Vector2f & p ,bool IsFalling){
         Sun* new_sun = new Sun(p , &money);
+        new_sun -> set_falling(IsFalling);
         suns.push_back(new_sun);    
 }
 
-void System::Updater(){                     ///We can find a way to not always check this func
+void System::Updater(){                     ///We can find a way to not always check this func //?
     vector<Sun*> trashs;
     vector<Shot*> trashot;
     vector<Plant*> trashp;
@@ -581,6 +638,40 @@ bool System::NewIcePea(const Vector2i& Mouse_position, const int health){
     }
     else 
         return false;
+}
+
+bool System::NewMelon(const Vector2i& Mouse_position, const int health){
+    int xP = -1;
+    int yP= -1;
+    const int area_X_border = 710;
+    for (int i : Possible_Plant_x){
+        if(Mouse_position.x > i && Mouse_position.x < area_X_border)
+            xP = i;
+    }
+    for (int j : Possible_Plant_Y){
+        if(Mouse_position.y > j)
+            yP = j;
+    }
+    for (auto p : plants){
+        if(p->IsTouchingMouse(Mouse_position))
+            return false;
+    }
+    if (xP != -1 && yP != -1){
+        Vector2f position = {xP , yP};
+        Melon* new_melon = new Melon(position , 500);
+        plants.push_back(new_melon);
+        money -= 25;
+        return true;
+    }
+    else 
+        return false;
+}
+
+
+void System::MakeMelonShot(const Vector2f& Plant_position,int l_num){//?
+    Vector2f p_ = {Plant_position.x+20 , Plant_position.y+5};
+    MelonShot* new_melon_shot = new MelonShot(p_,l_num);
+    melonshots.push_back(new_melon_shot);    
 }
 
 void System::MakeIceShot(const Vector2f& Plant_position){

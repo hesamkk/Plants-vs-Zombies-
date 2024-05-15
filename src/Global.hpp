@@ -24,6 +24,7 @@ public:
     bool isClicked(Vector2i Mouse_position);
     void Update();
     Sprite get_sprite() { return sprite; }
+    void set_falling(bool given){falling = given;}
 private:
     const string file_path = "./src/pics/Sun.png";
     Texture texture;
@@ -32,6 +33,8 @@ private:
     int *money;
     FloatRect Sprite_Bounds ;
     float dSpeed = 0.3;
+    bool falling = true;
+    int falling_count = 0;
 };
 
 class Card{
@@ -143,7 +146,7 @@ private:
 
 class IceShot{
 public:
-    IceShot(Vector2f given_pos){
+    IceShot(Vector2f given_pos){//?
         pos = given_pos;
         if(!texture.loadFromFile(file_path))
             abort();
@@ -169,14 +172,33 @@ private:
 
 class MelonShot{
 public:
-    MelonShot(Vector2f given_pos){
+    MelonShot(Vector2f given_pos , int l){
         pos = given_pos;
+        if(!texture.loadFromFile(file_path))
+            abort();
+        rect.left = 0;
+        rect.top = 0;
+        rect.height = 29;
+        rect.width = 29;
+        sprite.setTexture(texture);
+        sprite.setTextureRect(rect);
+        sprite.setPosition(pos);
+        line_Y = l;
     }
+    ~MelonShot();
     void Move();
-    void Render();
+    
+    // void Render();
+    Sprite get_sprite(){ return sprite; }
+    IntRect get_rect(){ return rect; }
 private:
-    const string file_path = "";
+    const string file_path = "./src/pics/melon_shot-removebg-preview.png";
     Vector2f pos;
+    Sprite sprite;
+    Texture texture;
+    IntRect rect;
+    int line_Y ;
+    
 };
 
 class DeathScreen{
